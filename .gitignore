@@ -1,0 +1,63 @@
+# =========================================================================
+# Xcode & Sistema
+# =========================================================================
+.DS_Store
+build/
+DerivedData/
+*.hmap
+*.moved-aside
+
+# Arquivos de empacotamento e diagnósticos de crash
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds do Xcode
+timeline.xctimeline
+playground.xcworkspace
+
+# =========================================================================
+# Configurações de Usuário (Evitam conflitos de merge na equipe)
+# =========================================================================
+xcuserdata/
+*.xcuserstate
+project.xcworkspace/
+
+# =========================================================================
+# Swift Package Manager (SPM)
+# =========================================================================
+.build/
+.swiftpm/
+
+# Descomente as linhas abaixo se NÃO quiser salvar o código-fonte/versões do SPM no Git
+# Packages/
+# Package.pins
+# Package.resolved
+
+# =========================================================================
+# CocoaPods (Opcional)
+# =========================================================================
+# Descomente a linha abaixo apenas se preferir manter o repositório leve.
+# Se mantiver comentada, os Pods sobem ao Git garantindo builds determinísticos.
+# Pods/
+
+# =========================================================================
+# Carthage
+# =========================================================================
+Carthage/Checkouts
+Carthage/Build/
+
+# =========================================================================
+# Fastlane
+# =========================================================================
+# Remove relatórios e mídias geradas temporariamente. Recompile-os via CLI quando necessário.
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output
+fastlane/screenshots/**/*.png
+
+# =========================================================================
+# Arquivos de Ambiente / Chaves Secretas (Segurança)
+# =========================================================================
+*.env
+*.xcconfig
