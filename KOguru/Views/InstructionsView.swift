@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  InstructionsView.swift
 //  KOguru
 //
-//  Created by Bernardo on 31/08/26.
+//  Created by Ulisses Bonfim on 01/09/26.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct InstructionsView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +20,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    InstructionsView()
 }
