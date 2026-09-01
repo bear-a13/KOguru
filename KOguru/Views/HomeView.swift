@@ -22,8 +22,8 @@ struct HomeView: View {
                 VStack{
                     Rectangle()
                         .foregroundColor(.black)
-                      .frame(width: 177, height: 148)
-                      .cornerRadius(15)
+                        .frame(width: 177, height: 148)
+                        .cornerRadius(15)
                 }
             }
             .padding()
@@ -36,13 +36,16 @@ struct HomeView: View {
                 .bold()
                 .foregroundColor(.black)
                 .padding(.vertical, 28)
-            Card()
-            Card()
-            Card()
+            
+            // Cards
+            Card(color: Color(red: 0.18, green: 0.24, blue: 0.4))
+            Card(color: Color(red: 0.3, green: 0.08, blue: 0.08))
+            Card(color: Color(red: 0.8, green: 0.66, blue: 0))
             
             
         }
-        .frame(width: 402, height: .infinity)
+        .frame(width: .infinity, height: .infinity)
+        .padding(.horizontal, 16)
         .background(Color(red: 0.82, green: 0.82, blue: 0.82).opacity(0.3))
         .cornerRadius(30)
         
