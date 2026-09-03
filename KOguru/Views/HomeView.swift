@@ -12,27 +12,22 @@ struct HomeView: View {
         NavigationStack {
             VStack{
                 VStack{
-                    VStack{
-                        VStack(alignment: .leading){
-                            Text("LOREN IPSUM")
-                                .font(.largeTitle)
-                                .bold()
-                            Text("consectetur adipiscing elit, sed do eiusmod tempor ")
-                            
-                            
-                        }
-                        VStack{
-                            Rectangle()
-                                .foregroundColor(.black)
-                                .frame(width: 177, height: 148)
-                                .cornerRadius(15)
-                        }
+                    VStack(alignment: .leading){
+                        Text("LOREN IPSUM")
+                            .font(.largeTitle)
+                            .bold()
+                        Text("consectetur adipiscing elit, sed do eiusmod tempor ")
+                        
+                        
+                        
+                        Rectangle()
+                            .foregroundColor(.black)
+                            .frame(width: 177, height: 148)
+                            .cornerRadius(15)
+                        
                     }
                     .padding()
                 }
-                .background(Color(red: 0.82, green: 0.82, blue: 0.82))
-                .cornerRadius(30)
-                .frame(width: .infinity)
                 
                 VStack(spacing: 16) {
     //                Text("LOREM IPSUM DOLOR SIT AMET?")
