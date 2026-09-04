@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Card: View {
+struct TrainCard: View {
     
     @Environment(\.dismiss) var dismiss
     
@@ -53,5 +53,5 @@ struct Card: View {
 
 
 #Preview(traits: .sizeThatFitsLayout) {
-    Card(color: Color(red: 0.18, green: 0.24, blue: 0.4))
+    TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
 }
