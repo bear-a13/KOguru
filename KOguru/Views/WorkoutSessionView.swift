@@ -31,9 +31,9 @@ struct WorkoutSessionView: View {
 
                     Spacer()
 
-                    Text("ALinhamento")
-                        .font(.system(size: 18, weight: .black))
-                        .foregroundColor(.black)
+                    Text("ALINHAMENTO")
+                        .font(Font.custom("Anton", size: 36))
+                        .foregroundColor(.white)
 
                     Spacer()
 
@@ -115,14 +115,14 @@ struct FramingOverlayView: View {
 //                .opacity(isFramed ? (1) : (0.5))
             
 
-            Text(isFramed ? "Corpo enquadrado! Iniciando..." : "Enquadre seu corpo na câmera")
-                .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.black)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(Color.white.opacity(0.6))
-                .cornerRadius(20)
-                .padding(.bottom, 30)
+//            Text(isFramed ? "Corpo enquadrado! Iniciando..." : "Enquadre seu corpo na câmera")
+//                .font(.system(size: 15, weight: .bold))
+//                .foregroundColor(.black)
+//                .padding(.horizontal, 20)
+//                .padding(.vertical, 10)
+//                .background(Color.white.opacity(0.6))
+//                .cornerRadius(20)
+//                .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
@@ -136,20 +136,24 @@ struct CountingOverlayView: View {
     var lastPunch: PunchType
 
     var body: some View {
-        VStack(spacing: 12) {
-            Text(String(format: "%02d", count))
-                .font(.system(size: 110, weight: .black, design: .rounded))
-                .foregroundColor(.white)
-                .shadow(radius: 40)
+        ZStack() {
+            VStack{
+                Text(String(format: "%02d", count))
 
-            if lastPunch != .none {
-                Text(lastPunch.rawValue)
-                    .font(.system(size: 18, weight: .black))
+                    .font(Font.custom("Sedgwick Ave Display", size: 110))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.black.opacity(0.8))
-                    .cornerRadius(10)
+                    .shadow(radius: 40)
+                
+                if lastPunch != .none {
+                    Text(lastPunch.rawValue)
+                        .font(.system(size: 26, weight: .black))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(10)
+                }
+                Spacer()
             }
         }
     }
