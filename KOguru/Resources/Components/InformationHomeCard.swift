@@ -11,19 +11,21 @@ struct InformationHomeCard: View {
     var body: some View {
         ZStack(alignment: .leading) {
             //TODO: adicionar a imagem do treco
-            Image("kaio-texture")
+            Image("kaio-card")
                 .resizable()
                 .scaledToFit()
             
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                .font(Font.custom("PingFang HK", size: 18))
+            Text("Sabia que no boxe, os pés são tão importantes quanto as mãos?")
+                .font(.custom("SedgwickAveDisplay-Regular", size: 24))
+                .tracking(0.23)
+                .offset(x: 27)
+                .lineSpacing(-6)
+                .foregroundStyle(.darkblue)
                 .containerRelativeFrame(.horizontal) { length, axis in
-                        length * 0.5
-                    }
-            
+                    length * 0.43
+                }
         }
         .frame(idealHeight: 148)
-        .background(Color(red: 0.96, green: 0.96, blue: 0.96).opacity(1))
         .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 35, topTrailingRadius: 35))
         .shadow(color: .black.opacity(0.13), radius: 20, x: 0, y: 8)
     }
