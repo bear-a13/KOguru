@@ -10,28 +10,44 @@ import SwiftUI
 struct HomeView: View {
     var body: some View {
         ZStack{
-            Color(red: 0.18, green: 0.24, blue: 0.4)
+            Color(Color.backgroundColorBlue)
                 .ignoresSafeArea()
             
             ScrollView(.vertical, showsIndicators: false){
                 VStack{
-                    InformationHomeCard()
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 16) {
-                        Text("VAMOS TREINAR")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .tracking(0.5)
-                        
-                        // Cards
-                        TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
-                        TrainCard(color: Color(red: 0.3, green: 0.08, blue: 0.08))
-                        TrainCard(color: Color(red: 0.8, green: 0.66, blue: 0))
-                        
+                    HStack(){
+                        Text("EAI TA PRONTO?")
+                            .padding(.horizontal, 16)
+                            .font(.largeTitle)
+                            .bold()
+                            .foregroundStyle(.white)
+                        Spacer()
                     }
-                    .padding(.horizontal, 16)
+                    InformationHomeCard()
+                        .padding(.bottom, 55)
+                   
+                        VStack(spacing: 16) {
+                            Text("VAMOS TREINAR!")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(Color.white)
+                                .padding(2)
+                            
+                            
+                            
+                            // Cards
+                            TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
+                            TrainCard(color: Color(red: 0.3, green: 0.08, blue: 0.08))
+                            TrainCard(color: Color(red: 0.8, green: 0.66, blue: 0))
+                            
+                        
+                        }
+                        .padding(.bottom, 100)
+                        .padding()
+                        .background(Color.backgroundColorRed)
+                        .cornerRadius(30)
+                    
+                    
                 }
             }
         }
