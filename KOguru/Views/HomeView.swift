@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     // 1. Variável de estado para controlar a abertura da câmera
     @State private var isShowingWorkoutSession = false
+    @State private var isShowingDrillSession = false
     
     var body: some View {
         ZStack {
@@ -48,12 +49,27 @@ struct HomeView: View {
                         Button(action: {
                             isShowingWorkoutSession = true
                         }) {
-                            TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
+                            TrainCard(color: .vermelhoCard,
+                                      titulo: "JAB E DIRETO",
+                                      subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto",
+                                      ImagemBack: "explozaoVermelho"
+                            )
                         }
                         .buttonStyle(.plain)
-                        
-                        TrainCard(color: Color(red: 0.3, green: 0.08, blue: 0.08))
-                        TrainCard(color: Color(red: 0.8, green: 0.66, blue: 0))
+                        Button(action: {
+                                                    isShowingDrillSession = true
+                                                }) {
+                                                    TrainCard(color: .azulCard,
+                                                              titulo: "DRILS",
+                                                              subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
+                                                              ImagemBack: "explozaoAzul"
+                                                    )
+                                                }
+                                                .buttonStyle(.plain)
+                        TrainCard(color: .amareloCard,
+                                  titulo: "MARIA LUIZA",
+                                  subTitulo: "Aprenda a fazer o verdadeiro design com amestre.",
+                                  ImagemBack: "explozaoAmarelo")
                     }
                     .padding(.bottom, 100)
                     .padding()
@@ -65,9 +81,12 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $isShowingWorkoutSession) {
             WorkoutSessionView()
         }
+        .fullScreenCover(isPresented: $isShowingDrillSession) {
+            DrillSessionView()
+        }
     }
 }
-
-#Preview {
-    HomeView()
-}
+//
+//#Preview {
+//    HomeView()
+//}

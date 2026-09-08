@@ -127,40 +127,45 @@ class WorkoutViewModel: ObservableObject {
     }
     
     // MARK: - Rastreamento e Previsão de Pontos Ocultos
-    private func buildTrackedPoints(from points: [VNHumanBodyPoseObservation.JointName: VNRecognizedPoint]) -> [String: CGPoint] {
-        let isLeftRearHand = userStance == .southpaw
-        let isRightRearHand = userStance == .orthodox
-        
-        let jointConfigs: [JointConfig] = [
-            JointConfig(label: "LS", name: .leftShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
-            JointConfig(label: "LE", name: .leftElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
-            JointConfig(
-                label: "LW",
-                name: .leftWrist,
-                minimumConfidence: isLeftRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence,
-                maxPredictionFrames: isLeftRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames
-            ),
-            JointConfig(label: "RS", name: .rightShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
-            JointConfig(label: "RE", name: .rightElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
-            JointConfig(
-                label: "RW",
-                name: .rightWrist,
-                minimumConfidence: isRightRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence,
-                maxPredictionFrames: isRightRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames
-            )
-        ]
-        
-        var trackedPoints: [String: CGPoint] = [:]
-        for config in jointConfigs {
-            trackedPoints[config.label] = trackedPoint(
-                points[config.name],
-                label: config.label,
-                minimumConfidence: config.minimumConfidence,
-                maxPredictionFrames: config.maxPredictionFrames
-            )
+    // MARK: - Rastreamento e Previsão de Pontos Ocultos
+        private func buildTrackedPoints(from points: [VNHumanBodyPoseObservation.JointName: VNRecognizedPoint]) -> [String: CGPoint] {
+            let isLeftRearHand = userStance == .southpaw
+            let isRightRearHand = userStance == .orthodox
+            
+            let jointConfigs: [JointConfig] = [
+                // Cabeça / Pescoço
+                JointConfig(label: "NK", name: .neck, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                
+                // Tronco Superior
+                JointConfig(label: "LS", name: .leftShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "RS", name: .rightShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                
+                // Braços
+                JointConfig(label: "LE", name: .leftElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
+                JointConfig(label: "RE", name: .rightElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
+                JointConfig(label: "LW", name: .leftWrist, minimumConfidence: isLeftRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence, maxPredictionFrames: isLeftRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames),
+                JointConfig(label: "RW", name: .rightWrist, minimumConfidence: isRightRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence, maxPredictionFrames: isRightRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames),
+                
+                // Tronco Inferior e Pernas
+                JointConfig(label: "LH", name: .leftHip, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "RH", name: .rightHip, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "LK", name: .leftKnee, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "RK", name: .rightKnee, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "LA", name: .leftAnkle, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+                JointConfig(label: "RA", name: .rightAnkle, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0)
+            ]
+            
+            var trackedPoints: [String: CGPoint] = [:]
+            for config in jointConfigs {
+                trackedPoints[config.label] = trackedPoint(
+                    points[config.name],
+                    label: config.label,
+                    minimumConfidence: config.minimumConfidence,
+                    maxPredictionFrames: config.maxPredictionFrames
+                )
+            }
+            return trackedPoints
         }
-        return trackedPoints
-    }
     
     private func trackedPoint(
         _ point: VNRecognizedPoint?,
@@ -204,14 +209,14 @@ class WorkoutViewModel: ObservableObject {
     }
     
     private func buildBodyJoints(from trackedPoints: [String: CGPoint], isMirrored: Bool) -> [BodyJoint] {
-        let orderedLabels = ["LS", "LW", "LE", "RS", "RW", "RE"]
-        return orderedLabels.compactMap { label in
-            guard let point = trackedPoints[label] else { return nil }
-            let mappedPoint = screenPoint(from: point, isMirrored: isMirrored)
-            let smoothedPoint = smooth(point: mappedPoint, for: label)
-            return BodyJoint(name: label, position: smoothedPoint)
+            let orderedLabels = ["NK", "LS", "LW", "LE", "RS", "RW", "RE", "LH", "RH", "LK", "RK", "LA", "RA"]
+            return orderedLabels.compactMap { label in
+                guard let point = trackedPoints[label] else { return nil }
+                let mappedPoint = screenPoint(from: point, isMirrored: isMirrored)
+                let smoothedPoint = smooth(point: mappedPoint, for: label)
+                return BodyJoint(name: label, position: smoothedPoint)
+            }
         }
-    }
     
     // MARK: - Algoritmo Biomecânico Ajustado para Posicionamento 45°
     private func armExtensionScore(
@@ -286,12 +291,13 @@ class WorkoutViewModel: ObservableObject {
     }
     
     // MARK: - Funções de Apoio Biomecânico
-    private func screenPoint(from visionPoint: CGPoint, isMirrored: Bool) -> CGPoint {
-        CGPoint(
-            x: isMirrored ? 1 - visionPoint.x : visionPoint.x,
-            y: 1 - visionPoint.y
-        )
-    }
+        private func screenPoint(from visionPoint: CGPoint, isMirrored: Bool) -> CGPoint {
+            // Rotaciona (Landscape para Portrait) E corrige o espelhamento da câmera frontal
+            CGPoint(
+                x: isMirrored ? 1 - visionPoint.y : visionPoint.y, // Eixo X invertido aqui!
+                y: 1 - visionPoint.x
+            )
+        }
     
     private func smooth(point: CGPoint, for key: String) -> CGPoint {
         guard let previous = smoothedJointPositions[key] else {

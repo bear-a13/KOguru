@@ -10,14 +10,14 @@ import SwiftUI
 struct TrainCard: View {
     
     @Environment(\.dismiss) var dismiss
-    var desbloqueado = "1"
     var color : Color
-    var titulo = "JAB E DIRETO"
-    var subTitulo = "Aprenda a execultar os movimentos do boxe Jab e Direto"
+    var titulo : String = "JAB E DIRETO"
+    var subTitulo : String = "Aprenda a execultar os movimentos do boxe Jab e Direto"
+    var ImagemBack : String =  "explozãoAzul"
     var body: some View {
-        if desbloqueado == "1" {
+       
             ZStack{
-                Image("explozao")
+                Image("\(ImagemBack)")
                     .resizable()
                     .scaledToFit()
                     .cornerRadius(16)
@@ -39,6 +39,8 @@ struct TrainCard: View {
                         Text("\(subTitulo)")
                             .font(Font.custom("PingFang HK", size: 18))
                             .foregroundStyle(color)
+                        
+                    
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 16)
@@ -57,16 +59,12 @@ struct TrainCard: View {
             }
             
             
-        } else {
-            Rectangle()
-                .foregroundStyle(Color.black)
-                .frame(width: .infinity, height: 148)
         }
     }
     
-}
 
 
-#Preview(traits: .sizeThatFitsLayout) {
-    TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
-}
+
+//#Preview(traits: .sizeThatFitsLayout) {
+//    TrainCard(color: Color(red: 0.18, green: 0.24, blue: 0.4))
+//}
