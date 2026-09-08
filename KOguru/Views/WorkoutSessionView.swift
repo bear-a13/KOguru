@@ -14,6 +14,10 @@ struct WorkoutSessionView: View {
             if viewModel.currentPhase == .framing {
                 FramingOverlayView(isFramed: viewModel.isProperlyFramed)
             }
+            
+            if viewModel.currentPhase == .counting {
+                    BodySkeletonView(joints: viewModel.bodyJoints)
+                }
 
             VStack {
                 //CABEÇARIO
