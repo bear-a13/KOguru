@@ -157,18 +157,13 @@ struct WorkoutSessionView: View {
     }
 
     private func startCamera() {
-        let session = cameraManager.session
+            let session = cameraManager.session
 
-        Self.cameraControlQueue.async {
-            guard !session.isRunning else { return }
-            session.startRunning()
+            Self.cameraControlQueue.async {
+                guard !session.isRunning else { return }
+                session.startRunning()
+            }
         }
-        .fullScreenCover(isPresented: $showTutorial) {
-            NavigationStack {
-                    TutorialView()
-                }
-        }
-    }
 
     private func stopCamera() {
         cameraManager.frameDelegate = nil
