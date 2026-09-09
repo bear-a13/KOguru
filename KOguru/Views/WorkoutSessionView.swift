@@ -100,7 +100,7 @@ struct WorkoutSessionView: View {
             Spacer()
 
             Text(viewModel.currentPhase == .framing ? "ALINHAMENTO" : "TREINO")
-                .font(.system(size: 32, weight: .black, design: .condensed))
+                .font(.system(size: 32, weight: .black))
                 .foregroundStyle(.white)
 
             Spacer()
