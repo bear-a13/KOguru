@@ -49,7 +49,7 @@ struct WorkoutSessionView: View {
         }
     }
 
-    // MARK: - Interface antiga da câmera
+    // MARK: - Interface da câmera
 
     private var cameraContent: some View {
         ZStack {
@@ -174,7 +174,7 @@ struct WorkoutSessionView: View {
         }
     }
 
-    // MARK: - Fluxo de resultados mantido
+    // MARK: - Fluxo de resultados 
 
     private func finishWorkout() {
         let generatedResult = viewModel.finishWorkout()
@@ -199,7 +199,7 @@ struct WorkoutSessionView: View {
     }
 }
 
-// MARK: - Overlay antigo de enquadramento
+// MARK: - Overlay de enquadramento
 
 struct FramingOverlayView: View {
     var isFramed: Bool
@@ -213,14 +213,13 @@ struct FramingOverlayView: View {
                 .clipped()
                 .ignoresSafeArea()
 
-            // `isFramed` permanece disponível para uma animação futura.
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }
 }
 
-// MARK: - Contador antigo
+// MARK: - Contador
 
 struct CountingOverlayView: View {
     var count: Int
@@ -249,8 +248,6 @@ struct CountingOverlayView: View {
         }
     }
 }
-
-// MARK: - Componente antigo preservado
 
 struct FinishedOverlayView: View {
     var totalPunches: Int

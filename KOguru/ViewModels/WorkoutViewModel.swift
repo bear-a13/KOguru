@@ -90,6 +90,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             }
 
             switch self.currentPhase {
+                
             case .framing:
                 self.checkFraming(body: body, timestamp: validTimestamp)
             case .counting:
