@@ -237,7 +237,10 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         guard let points = try? body.recognizedPoints(.all) else { return }
 
         let trackedPoints = buildTrackedPoints(from: points)
-        let joints = buildBodyJoints(from: trackedPoints)
+        let joints = buildBodyJoints(
+            from: trackedPoints,
+            isMirrored: true
+        )
 
         guard let leftShoulder = trackedPoints[JointLabel.leftShoulder],
               let leftElbow = trackedPoints[JointLabel.leftElbow],
@@ -666,23 +669,36 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         let rightIsRearHand = processingStance == .orthodox
 
         let configs: [JointConfig] = [
+            // Cabeça e pescoço. O nariz é usado na avaliação de guarda;
+            // o pescoço é usado para desenhar o esqueleto completo.
             JointConfig(label: JointLabel.nose, name: .nose, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.neck, name: .neck, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+
+            // Tronco superior e braços.
             JointConfig(label: JointLabel.leftShoulder, name: .leftShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.rightShoulder, name: .rightShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
             JointConfig(label: JointLabel.leftElbow, name: .leftElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
+            JointConfig(label: JointLabel.rightElbow, name: .rightElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
             JointConfig(
                 label: JointLabel.leftWrist,
                 name: .leftWrist,
                 minimumConfidence: leftIsRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence,
                 maxPredictionFrames: leftIsRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames
             ),
-            JointConfig(label: JointLabel.rightShoulder, name: .rightShoulder, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
-            JointConfig(label: JointLabel.rightElbow, name: .rightElbow, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 1),
             JointConfig(
                 label: JointLabel.rightWrist,
                 name: .rightWrist,
                 minimumConfidence: rightIsRearHand ? rearWristMinimumConfidence : leadWristMinimumConfidence,
                 maxPredictionFrames: rightIsRearHand ? maxRearWristPredictionFrames : maxLeadWristPredictionFrames
-            )
+            ),
+
+            // Tronco inferior e pernas para o BodySkeletonView da develop.
+            JointConfig(label: JointLabel.leftHip, name: .leftHip, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.rightHip, name: .rightHip, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.leftKnee, name: .leftKnee, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.rightKnee, name: .rightKnee, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.leftAnkle, name: .leftAnkle, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0),
+            JointConfig(label: JointLabel.rightAnkle, name: .rightAnkle, minimumConfidence: bodyMinimumConfidence, maxPredictionFrames: 0)
         ]
 
         var result: [String: CGPoint] = [:]
@@ -734,16 +750,32 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         return predicted
     }
 
-    private func buildBodyJoints(from points: [String: CGPoint]) -> [BodyJoint] {
+    private func buildBodyJoints(
+        from points: [String: CGPoint],
+        isMirrored: Bool
+    ) -> [BodyJoint] {
         JointLabel.ordered.compactMap { label in
             guard let point = points[label] else { return nil }
 
-            // O request já recebe a orientação espelhada. Espelhar x novamente
-            // faria o esqueleto trocar de lado em relação ao preview frontal.
-            let topLeftPoint = CGPoint(x: point.x, y: 1 - point.y)
-            let smoothed = smooth(point: topLeftPoint, for: label)
+            // Conversão que já estava sendo usada pela develop para alinhar
+            // o buffer landscape com o preview portrait da câmera frontal.
+            let mappedPoint = screenPoint(
+                from: point,
+                isMirrored: isMirrored
+            )
+            let smoothed = smooth(point: mappedPoint, for: label)
             return BodyJoint(name: label, position: smoothed)
         }
+    }
+
+    private func screenPoint(
+        from visionPoint: CGPoint,
+        isMirrored: Bool
+    ) -> CGPoint {
+        CGPoint(
+            x: isMirrored ? 1 - visionPoint.y : visionPoint.y,
+            y: 1 - visionPoint.x
+        )
     }
 
     private func smooth(point: CGPoint, for key: String) -> CGPoint {
@@ -921,20 +953,33 @@ private struct TrackedPoint {
 
 private enum JointLabel {
     static let nose = "N"
+    static let neck = "NK"
     static let leftShoulder = "LS"
     static let leftElbow = "LE"
     static let leftWrist = "LW"
     static let rightShoulder = "RS"
     static let rightElbow = "RE"
     static let rightWrist = "RW"
+    static let leftHip = "LH"
+    static let rightHip = "RH"
+    static let leftKnee = "LK"
+    static let rightKnee = "RK"
+    static let leftAnkle = "LA"
+    static let rightAnkle = "RA"
 
     static let ordered = [
-        nose,
+        neck,
         leftShoulder,
         leftElbow,
         leftWrist,
         rightShoulder,
         rightElbow,
-        rightWrist
+        rightWrist,
+        leftHip,
+        rightHip,
+        leftKnee,
+        rightKnee,
+        leftAnkle,
+        rightAnkle
     ]
 }
