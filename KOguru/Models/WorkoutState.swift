@@ -16,7 +16,7 @@ enum WorkoutPhase {
 enum PunchType: String {
     case none = "EM GUARDA"
     case jab = "JAB"
-    case direto = "DIRETO"
+    case cross = "DIRETO"
 }
 
 enum Stance {
