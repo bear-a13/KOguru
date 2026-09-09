@@ -45,37 +45,51 @@ struct DrillSessionView: View {
                 Spacer()
                 
                 if workoutViewModel.currentPhase == .counting {
-                    VStack(spacing: 4) {
+                    VStack(alignment: .center, spacing: 4) {
                         if drillManager.isComboCompleted {
-                            Text("BOA!")
+                            Text("EXCELENTE!")
                                 .font(.system(size: 48, weight: .black))
-                                .foregroundColor(.green)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.vermelhoCard.opacity(0.6))
+                                .cornerRadius(30)
+
                         } else if let combo = drillManager.currentCombo {
-                            HStack(spacing: 8) {
+                            VStack(alignment: .center) {
                                 ForEach(Array(combo.sequence.enumerated()), id: \.offset) { index, punch in
                                     let isCompleted = index < drillManager.currentStepIndex
                                     let isLast = index == combo.sequence.count - 1
                                     
                                     Text(punchName(for: punch) + (isLast ? "" : ""))
                                         .font(.system(size: 36, weight: .black))
-                                        .foregroundColor(isCompleted ? .green : .white)
+                                        .foregroundColor(isCompleted ? .white : .white)
                                         .opacity(isCompleted ? 0.4 : 1.0)
                                         .animation(.easeInOut(duration: 0.2), value: drillManager.currentStepIndex)
                                 }
-                            }
+                            }.padding()
+                                .background(Color.vermelhoCard.opacity(0.6))
+                                .cornerRadius(30)
                             .padding(.bottom, 60)
                         }
                     }
+                    .padding(.bottom,60)
                     
                 }
             }
         }
         .navigationBarHidden(true)
         .onAppear {
-            cameraManager.frameDelegate = { sampleBuffer in
-                workoutViewModel.processFrame(sampleBuffer)
-            }
-        }
+                    // Mantém a tela sempre ligada
+                    UIApplication.shared.isIdleTimerDisabled = true
+                    
+                    cameraManager.frameDelegate = { sampleBuffer in
+                        workoutViewModel.processFrame(sampleBuffer)
+                    }
+                }
+                .onDisappear {
+                    // Devolve o controle de bloqueio de tela para o iOS ao sair
+                    UIApplication.shared.isIdleTimerDisabled = false
+    }
         .onChange(of: workoutViewModel.currentPhase) { newPhase in
             if newPhase == .counting {
                 drillManager.startDrill()

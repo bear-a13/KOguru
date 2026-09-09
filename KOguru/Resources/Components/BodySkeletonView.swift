@@ -2,7 +2,7 @@ import SwiftUI
 
 struct BodySkeletonView: View {
     var joints: [BodyJoint]
-    var lineColor: Color = Color(red: 1.0, green: 0.78, blue: 0.0) // Amarelo #FFC700
+    var lineColor: Color = Color.esqueleton 
     var lineWidth: CGFloat = 6
 
     var body: some View {

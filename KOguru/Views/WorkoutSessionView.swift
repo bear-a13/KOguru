@@ -57,7 +57,7 @@ struct WorkoutSessionView: View {
 
                 Spacer()
 
-                // Conteúdo central
+                // CONTROLE DAS TELAS
                 switch viewModel.currentPhase {
                 case .framing:
                     EmptyView()
@@ -79,13 +79,13 @@ struct WorkoutSessionView: View {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 16, weight: .bold))
                             Text("FINALIZAR")
-                                .font(.system(size: 16, weight: .bold))
-                            
+                                .font(Font.custom("Anton", size: 36))
+
                         }
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
-                        .background(Color.white)
+                        .background(Color.vermelhoCard)
                         .cornerRadius(16)
                         .padding(.horizontal, 30)
                         .padding(.bottom, 30)
@@ -95,12 +95,19 @@ struct WorkoutSessionView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
+            // SERVE PARA MANTER A TELA LIGADA
+            UIApplication.shared.isIdleTimerDisabled = true
+            
             cameraManager.frameDelegate = { sampleBuffer in
                 viewModel.processFrame(sampleBuffer)
             }
         }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
     }
 }
+
 
 //
 struct FramingOverlayView: View {

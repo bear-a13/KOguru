@@ -12,18 +12,29 @@ class DrillManager: ObservableObject {
     
     private let combos: [DrillCombo] = [
         // SE QUISER COLOCAR MAIS COMBOS Ë SO COLOCAR AQUI
-        DrillCombo(textToSpeak: "Jab", sequence: [.jab]),
-        DrillCombo(textToSpeak: "Direto", sequence: [.direto]),
-        DrillCombo(textToSpeak: "Jab, Direto", sequence: [.jab, .direto]),
-        DrillCombo(textToSpeak: "Jab, Jab, Direto", sequence: [.jab, .jab, .direto]),
-        
-        DrillCombo(textToSpeak: "Esquiva, Direto", sequence: [.direto]),
-        DrillCombo(textToSpeak: "Esquiva, Jab, Direto", sequence: [.jab, .direto]),
-        
-        DrillCombo(textToSpeak: "Jab, Direto, Jab, Direto", sequence: [.jab, .direto, .jab, .direto]),
-        DrillCombo(textToSpeak: "Jab, Direto, Esquiva, Direto", sequence: [.jab, .direto, .direto]),
-        DrillCombo(textToSpeak: "Esquiva, Direto, Jab, Direto", sequence: [.direto, .jab, .direto])
-    ]
+      
+                DrillCombo(textToSpeak: "Jab", sequence: [.jab]),
+                DrillCombo(textToSpeak: "Direto", sequence: [.direto]),
+                // Duplas de Volume e Entrada
+                DrillCombo(textToSpeak: "Jab, Jab", sequence: [.jab, .jab]),
+                DrillCombo(textToSpeak: "Jab, Direto", sequence: [.jab, .direto]),
+                DrillCombo(textToSpeak: "Direto, Jab", sequence: [.direto, .jab]),
+                DrillCombo(textToSpeak: "Direto, Direto", sequence: [.direto, .direto]),
+                
+                // Trios Clássicos
+                DrillCombo(textToSpeak: "Jab, Jab, Direto", sequence: [.jab, .jab, .direto]),
+                DrillCombo(textToSpeak: "Jab, Direto, Jab", sequence: [.jab, .direto, .jab]),
+                DrillCombo(textToSpeak: "Direto, Jab, Direto", sequence: [.direto, .jab, .direto]),
+                DrillCombo(textToSpeak: "Jab, Direto, Direto", sequence: [.jab, .direto, .direto]),
+                DrillCombo(textToSpeak: "Jab, Jab, Jab", sequence: [.jab, .jab, .jab]),
+                
+                // Sequências Longas e Volume Avançado
+                DrillCombo(textToSpeak: "Jab, Jab, Jab, Direto", sequence: [.jab, .jab, .jab, .direto]),
+                DrillCombo(textToSpeak: "Jab, Direto, Jab, Direto", sequence: [.jab, .direto, .jab, .direto]),
+                DrillCombo(textToSpeak: "Direto, Jab, Jab, Direto", sequence: [.direto, .jab, .jab, .direto]),
+                DrillCombo(textToSpeak: "Jab, Jab, Direto, Direto", sequence: [.jab, .jab, .direto, .direto]),
+                DrillCombo(textToSpeak: "Jab, Direto, Jab, Direto, Jab", sequence: [.jab, .direto, .jab, .direto, .jab])
+            ]
     
     func startDrill() {
         isDrillActive = true
