@@ -16,7 +16,7 @@ struct DrillSessionView: View {
             }
             
             if workoutViewModel.currentPhase == .framing {
-                FramingOverlayView(isFramed: workoutViewModel.isProperlyFramed)
+                FramingOverlayView(isFramed: workoutViewModel.isProperlyFramed, progress: 0)
             }
             
             VStack {
@@ -89,7 +89,7 @@ struct DrillSessionView: View {
     private func punchName(for punch: PunchType) -> String {
         switch punch {
         case .jab: return "JAB"
-        case .direto: return "DIRETO"
+        case .cross: return "DIRETO"
         default: return ""
         }
     }
