@@ -1,19 +1,9 @@
 import SwiftUI
-import AVFoundation
 
 struct WorkoutSessionView: View {
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var viewModel = WorkoutViewModel()
-    @StateObject private var resultsStore = ResultsStore()
     @Environment(\.dismiss) private var dismiss
-
-    @State private var result: ResultsModel?
-    @State private var isShowingInfo = false
-
-    private static let cameraControlQueue = DispatchQueue(
-        label: "br.com.koguru.camera-control",
-        qos: .userInitiated
-    )
 
     var body: some View {
         Group {
