@@ -50,6 +50,7 @@ class WorkoutViewModel: ObservableObject {
             }
             
             switch self.currentPhase {
+                
             case .framing:
                 self.checkFraming(body: body)
             case .counting:
