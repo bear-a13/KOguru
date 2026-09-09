@@ -29,146 +29,135 @@ struct WorkoutSessionView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear(perform: configureCamera)
-        .onDisappear(perform: stopCamera)
+        .onAppear {
+            // Mantém a tela ligada durante o treino.
+            UIApplication.shared.isIdleTimerDisabled = true
+            configureCamera()
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            stopCamera()
+        }
         .alert("Como a velocidade funciona?", isPresented: $isShowingInfo) {
             Button("Entendi", role: .cancel) {}
         } message: {
-            Text("A câmera usa pose 2D. Por isso, a velocidade é relativa e aparece em larguras de ombro por segundo (LO/s), não em metros por segundo.")
+            Text(
+                "A câmera usa pose 2D. Por isso, a velocidade é relativa "
+                    + "e aparece em larguras de ombro por segundo (LO/s), "
+                    + "não em metros por segundo."
+            )
         }
     }
+
+    // MARK: - Interface antiga da câmera
 
     private var cameraContent: some View {
         ZStack {
+            // FRAME DA CÂMERA
             CameraPreview(session: cameraManager.session)
                 .ignoresSafeArea()
 
-            Color.black.opacity(0.08)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
             if viewModel.currentPhase == .framing {
                 FramingOverlayView(
-                    isFramed: viewModel.isProperlyFramed,
-                    progress: viewModel.framingProgress
+                    isFramed: viewModel.isProperlyFramed
                 )
             }
 
-            // Mantém a visualização do esqueleto que foi adicionada na develop.
             if viewModel.currentPhase == .counting {
                 BodySkeletonView(joints: viewModel.bodyJoints)
-                    .allowsHitTesting(false)
             }
 
-            VStack(spacing: 16) {
-                header
+            VStack {
+                // CABEÇALHO
+                HStack {
+                    Button(action: closeWorkout) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.black)
+                            .frame(width: 40, height: 40)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                    }
 
-                if viewModel.currentPhase == .framing {
-                    stancePicker
+                    Spacer()
+
+                    Text("ALINHAMENTO")
+                        .font(Font.custom("Anton", size: 36))
+                        .foregroundColor(.white)
+
+                    Spacer()
+
+                    Button {
+                        isShowingInfo = true
+                    } label: {
+                        Image(systemName: "info")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.black)
+                            .frame(width: 40, height: 40)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 50)
 
                 Spacer()
 
-                if viewModel.currentPhase == .counting {
+                // CONTROLE DAS TELAS
+                switch viewModel.currentPhase {
+                case .framing:
+                    EmptyView()
+
+                case .counting:
                     CountingOverlayView(
                         count: viewModel.punchCount,
-                        lastPunch: viewModel.lastDetectedPunch,
-                        lastSpeed: viewModel.lastPunchSpeed
+                        lastPunch: viewModel.lastDetectedPunch
                     )
+
+                case .finished:
+                    // O resultado é exibido pelo Group principal.
+                    EmptyView()
                 }
 
                 Spacer()
 
                 if viewModel.currentPhase == .counting {
-                    finishButton
+                    Button(action: finishWorkout) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 16, weight: .bold))
+
+                            Text("FINALIZAR")
+                                .font(Font.custom("Anton", size: 36))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 54)
+                        .background(Color.vermelhoCard)
+                        .cornerRadius(16)
+                        .padding(.horizontal, 30)
+                        .padding(.bottom, 30)
+                    }
                 }
             }
         }
     }
 
-    private var header: some View {
-        HStack {
-            Button(action: closeWorkout) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.black)
-                    .frame(width: 40, height: 40)
-                    .background(.white)
-                    .clipShape(Circle())
-            }
-
-            Spacer()
-
-            Text(viewModel.currentPhase == .framing ? "ALINHAMENTO" : "TREINO")
-                .font(.system(size: 32, weight: .black))
-                .foregroundStyle(.white)
-
-            Spacer()
-
-            Button {
-                isShowingInfo = true
-            } label: {
-                Image(systemName: "info")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.black)
-                    .frame(width: 40, height: 40)
-                    .background(.white)
-                    .clipShape(Circle())
-            }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 12)
-    }
-
-    private var stancePicker: some View {
-        VStack(spacing: 8) {
-            Text("SUA BASE")
-                .font(.caption.weight(.black))
-                .foregroundStyle(.white)
-
-            Picker(
-                "Base",
-                selection: Binding(
-                    get: { viewModel.userStance },
-                    set: { viewModel.setStance($0) }
-                )
-            ) {
-                ForEach(Stance.allCases, id: \.self) { stance in
-                    Text(stance.displayName).tag(stance)
-                }
-            }
-            .pickerStyle(.segmented)
-        }
-        .padding(12)
-        .background(.black.opacity(0.55))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 24)
-    }
-
-    private var finishButton: some View {
-        Button(action: finishWorkout) {
-            Label("FINALIZAR", systemImage: "checkmark")
-                .font(.headline.weight(.black))
-                .foregroundStyle(.black)
-                .frame(maxWidth: .infinity)
-                .frame(height: 54)
-                .background(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .padding(.horizontal, 30)
-        .padding(.bottom, 20)
-    }
+    // MARK: - Câmera
 
     private func configureCamera() {
         let model = viewModel
+
         cameraManager.frameDelegate = { [weak model] sampleBuffer in
             model?.processFrame(sampleBuffer)
         }
+
         startCamera()
     }
 
     private func startCamera() {
         let session = cameraManager.session
+
         Self.cameraControlQueue.async {
             guard !session.isRunning else { return }
             session.startRunning()
@@ -177,13 +166,15 @@ struct WorkoutSessionView: View {
 
     private func stopCamera() {
         cameraManager.frameDelegate = nil
-
         let session = cameraManager.session
+
         Self.cameraControlQueue.async {
             guard session.isRunning else { return }
             session.stopRunning()
         }
     }
+
+    // MARK: - Fluxo de resultados mantido
 
     private func finishWorkout() {
         let generatedResult = viewModel.finishWorkout()
@@ -202,73 +193,92 @@ struct WorkoutSessionView: View {
     }
 
     private func closeWorkout() {
+        UIApplication.shared.isIdleTimerDisabled = false
         stopCamera()
         dismiss()
     }
 }
 
+// MARK: - Overlay antigo de enquadramento
+
 struct FramingOverlayView: View {
-    let isFramed: Bool
-    let progress: Double
+    var isFramed: Bool
 
     var body: some View {
-        VStack {
-            Spacer()
+        ZStack(alignment: .bottom) {
+            Image("frame")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .ignoresSafeArea()
 
-            VStack(spacing: 10) {
-                Text(isFramed ? "MANTENHA A POSIÇÃO" : "ENQUADRE TODO O CORPO")
-                    .font(.headline.weight(.black))
-                    .foregroundStyle(.black)
-
-                ProgressView(value: progress)
-                    .tint(isFramed ? .green : .orange)
-
-                Text("Cabeça, mãos e tornozelos precisam aparecer na câmera.")
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.black.opacity(0.70))
-            }
-            .padding(18)
-            .background(.white.opacity(0.92))
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .padding(.horizontal, 28)
-            .padding(.bottom, 34)
+            // `isFramed` permanece disponível para uma animação futura.
         }
-        .allowsHitTesting(false)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
     }
 }
 
+// MARK: - Contador antigo
+
 struct CountingOverlayView: View {
-    let count: Int
-    let lastPunch: PunchType
-    let lastSpeed: Double?
+    var count: Int
+    var lastPunch: PunchType
 
     var body: some View {
-        VStack(spacing: 10) {
-            Text(String(format: "%02d", count))
-                .font(.system(size: 104, weight: .black, design: .rounded))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.65), radius: 22)
+        ZStack {
+            VStack {
+                Text(String(format: "%02d", count))
+                    .font(Font.custom("Sedgwick Ave Display", size: 110))
+                    .foregroundColor(.white)
+                    .shadow(radius: 40)
 
-            if lastPunch != .none {
-                Text(lastPunch.rawValue)
-                    .font(.title2.weight(.black))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 9)
-                    .background(.black.opacity(0.78))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
+                if lastPunch != .none {
+                    Text(lastPunch.rawValue)
+                        .font(.system(size: 26, weight: .black))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(10)
+                }
 
-            if let lastSpeed {
-                Text(String(format: "Último: %.2f LO/s", lastSpeed))
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(.black.opacity(0.58))
-                    .clipShape(Capsule())
+                Spacer()
             }
         }
+    }
+}
+
+// MARK: - Componente antigo preservado
+
+struct FinishedOverlayView: View {
+    var totalPunches: Int
+    var onRestart: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Text("TREINO FINALIZADO")
+                .font(.system(size: 22, weight: .black))
+                .foregroundColor(.black)
+
+            Text("\(totalPunches) socos registrados")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.black.opacity(0.8))
+
+            Button(action: onRestart) {
+                Text("REINICIAR")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 30)
+                    .padding(.vertical, 12)
+                    .background(Color.black)
+                    .cornerRadius(12)
+            }
+        }
+        .padding(30)
+        .background(Color.white.opacity(0.95))
+        .cornerRadius(24)
+        .padding(.horizontal, 40)
     }
 }

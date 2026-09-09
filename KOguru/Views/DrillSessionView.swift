@@ -16,7 +16,7 @@ struct DrillSessionView: View {
             }
             
             if workoutViewModel.currentPhase == .framing {
-                FramingOverlayView(isFramed: workoutViewModel.isProperlyFramed, progress: 0)
+                FramingOverlayView(isFramed: workoutViewModel.isProperlyFramed)
             }
             
             VStack {
