@@ -4,6 +4,7 @@ struct WorkoutSessionView: View {
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var viewModel = WorkoutViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var showTutorial = false
 
     var body: some View {
         ZStack {
@@ -42,7 +43,7 @@ struct WorkoutSessionView: View {
                     Spacer()
 
                     Button(action: {
-                            // COLOCAR AQUI O LINK PARA O INFO
+                        showTutorial = true
                     }) {
                         Image(systemName: "info")
                             .font(.system(size: 16, weight: .bold))
@@ -98,6 +99,11 @@ struct WorkoutSessionView: View {
             cameraManager.frameDelegate = { sampleBuffer in
                 viewModel.processFrame(sampleBuffer)
             }
+        }
+        .fullScreenCover(isPresented: $showTutorial) {
+            NavigationStack {
+                    TutorialView()
+                }
         }
     }
 }

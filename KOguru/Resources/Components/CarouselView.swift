@@ -9,12 +9,8 @@ import SwiftUI
 
 struct CarouselView: View {
     
-    let carouselItems = [
-        CarouselItem(image: "car1", title: "PRIMEIRO PASSO", description: "Estenda o braço da frente rapidamente, girando levemente o punho no final do movimento. Mantenha a outra mão protegendo o rosto e retorne à guarda logo após o golpe."),
-        CarouselItem(image: "car2", title: "SEGUNDO PASSO", description: "blabla"),
-        CarouselItem(image: "car3", title: "TERCEIRO PASSO", description: "sjehfkshd"),
-        CarouselItem(image: "car4", title: "QUARTO PASSO", description: "asihdoaeijdaol")
-    ]
+    let carouselItems = carregarTutorial()
+    
     var body: some View {
         TabView {
             ForEach(carouselItems) { item in
@@ -38,7 +34,8 @@ struct CarouselView: View {
                             .resizable()
                             .scaledToFill()
                             .clipped()
-                            .frame(width: 370, height: 200)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 200)
                             .clipShape(
                                 .rect(
                                     topLeadingRadius: 0,
@@ -47,16 +44,20 @@ struct CarouselView: View {
                                     topTrailingRadius: 16
                                 )
                             )
-                            .shadow(radius: 5)
+                            .compositingGroup()
+                            .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
                             .padding(.bottom, 10)
+                            
                         
                         Text(item.description)
                             .foregroundColor(.white)
                             .font(.system(size: 19))
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 5)
                             .padding(.bottom, 30)
                     }
                 }
+                .padding(.horizontal, 12)
             }
         }
         .tabViewStyle(.page)
