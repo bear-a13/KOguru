@@ -89,7 +89,7 @@ struct DrillSessionView: View {
     private func punchName(for punch: PunchType) -> String {
         switch punch {
         case .jab: return "JAB"
-        case .direto: return "DIRETO"
+        case .cross: return "DIRETO"
         default: return ""
         }
     }

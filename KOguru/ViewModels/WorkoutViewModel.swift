@@ -251,7 +251,7 @@ class WorkoutViewModel: ObservableObject {
         }
         
         if rearScore - leadScore > scoreDifferenceThreshold {
-            return .direto
+            return .cross
         }
         
         return .none

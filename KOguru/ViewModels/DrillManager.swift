@@ -13,16 +13,16 @@ class DrillManager: ObservableObject {
     private let combos: [DrillCombo] = [
         // SE QUISER COLOCAR MAIS COMBOS Ë SO COLOCAR AQUI
         DrillCombo(textToSpeak: "Jab", sequence: [.jab]),
-        DrillCombo(textToSpeak: "Direto", sequence: [.direto]),
-        DrillCombo(textToSpeak: "Jab, Direto", sequence: [.jab, .direto]),
-        DrillCombo(textToSpeak: "Jab, Jab, Direto", sequence: [.jab, .jab, .direto]),
+        DrillCombo(textToSpeak: "Direto", sequence: [.cross]),
+        DrillCombo(textToSpeak: "Jab, Direto", sequence: [.jab, .cross]),
+        DrillCombo(textToSpeak: "Jab, Jab, Direto", sequence: [.jab, .jab, .cross]),
         
-        DrillCombo(textToSpeak: "Esquiva, Direto", sequence: [.direto]),
-        DrillCombo(textToSpeak: "Esquiva, Jab, Direto", sequence: [.jab, .direto]),
+        DrillCombo(textToSpeak: "Esquiva, Direto", sequence: [.cross]),
+        DrillCombo(textToSpeak: "Esquiva, Jab, Direto", sequence: [.jab, .cross]),
         
-        DrillCombo(textToSpeak: "Jab, Direto, Jab, Direto", sequence: [.jab, .direto, .jab, .direto]),
-        DrillCombo(textToSpeak: "Jab, Direto, Esquiva, Direto", sequence: [.jab, .direto, .direto]),
-        DrillCombo(textToSpeak: "Esquiva, Direto, Jab, Direto", sequence: [.direto, .jab, .direto])
+        DrillCombo(textToSpeak: "Jab, Direto, Jab, Direto", sequence: [.jab, .cross, .jab, .cross]),
+        DrillCombo(textToSpeak: "Jab, Direto, Esquiva, Direto", sequence: [.jab, .cross, .cross]),
+        DrillCombo(textToSpeak: "Esquiva, Direto, Jab, Direto", sequence: [.cross, .jab, .cross])
     ]
     
     func startDrill() {
