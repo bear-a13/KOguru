@@ -39,7 +39,6 @@ struct TutorialView: View {
                         .foregroundColor(.white)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 10)
                     
                     VStack{
                         CarouselView()
@@ -97,7 +96,7 @@ struct TutorialView: View {
             }
             HStack(alignment: .center) {
                 Button(action: {
-                    print("apertou botao ")
+                    dismiss()
                 }) {
                     HStack{
                         Image(systemName: "camera.fill")

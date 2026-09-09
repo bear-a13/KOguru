@@ -6,6 +6,7 @@ struct WorkoutSessionView: View {
     @StateObject private var viewModel = WorkoutViewModel()
     @StateObject private var resultsStore = ResultsStore()
     @Environment(\.dismiss) private var dismiss
+    @State private var showTutorial = false
 
     @State private var result: ResultsModel?
     @State private var isShowingInfo = false
@@ -161,6 +162,11 @@ struct WorkoutSessionView: View {
         Self.cameraControlQueue.async {
             guard !session.isRunning else { return }
             session.startRunning()
+        }
+        .fullScreenCover(isPresented: $showTutorial) {
+            NavigationStack {
+                    TutorialView()
+                }
         }
     }
 
