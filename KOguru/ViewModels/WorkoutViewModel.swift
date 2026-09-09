@@ -119,8 +119,13 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         timestamp: TimeInterval
     ) {
         let requiredJoints: [VNHumanBodyPoseObservation.JointName] = [
-            .nose, .leftShoulder, .rightShoulder,
-            .leftWrist, .rightWrist, .leftAnkle, .rightAnkle
+            .nose,
+            .leftShoulder,
+            .rightShoulder,
+            .leftWrist,
+            .rightWrist,
+            .leftAnkle,
+            .rightAnkle
         ]
 
         var allVisible = true
@@ -162,7 +167,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         timestamp: TimeInterval
     ) {
         guard let points = try? body.recognizedPoints(.all) else { return }
-        
+
         let trackedPoints = buildTrackedPoints(from: points)
         let joints = buildBodyJoints(
             from: trackedPoints,
@@ -187,12 +192,14 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         }
 
         let shoulderWidth = max(distance(leftShoulder, rightShoulder), 0.12)
+
         let leftScore = armExtensionScore(
             shoulder: leftShoulder,
             elbow: leftElbow,
             wrist: leftWrist,
             shoulderWidth: shoulderWidth
         )
+
         let rightScore = armExtensionScore(
             shoulder: rightShoulder,
             elbow: rightElbow,
@@ -354,7 +361,6 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         wrist: CGPoint,
         shoulderWidth: CGFloat
     ) -> CGFloat {
-        // Extensão do cotovelo (exige abertura próxima do final)
         let angle = jointAngle(shoulder, elbow, wrist)
         let elbowStraightness = clamp((angle - 100) / 65, min: 0, max: 1)
         let reach = clamp(
@@ -392,7 +398,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         if rearScore - leadScore > scoreDifferenceThreshold {
             return .cross
         }
-        
+
         return .none
     }
 
@@ -559,7 +565,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             smoothedJointPositions[key] = point
             return point
         }
-        
+
         let smoothed = CGPoint(
             x: previous.x + (point.x - previous.x) * smoothingFactor,
             y: previous.y + (point.y - previous.y) * smoothingFactor
@@ -590,6 +596,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             + firstVector.dy * secondVector.dy
         let firstMagnitude = hypot(firstVector.dx, firstVector.dy)
         let secondMagnitude = hypot(secondVector.dx, secondVector.dy)
+
         guard firstMagnitude > 0, secondMagnitude > 0 else { return 0 }
 
         let cosine = clamp(
@@ -599,8 +606,12 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         )
         return acos(cosine) * 180 / .pi
     }
-    
-    private func clamp(_ value: CGFloat, min minimum: CGFloat, max maximum: CGFloat) -> CGFloat {
+
+    private func clamp(
+        _ value: CGFloat,
+        min minimum: CGFloat,
+        max maximum: CGFloat
+    ) -> CGFloat {
         Swift.min(Swift.max(value, minimum), maximum)
     }
 
@@ -664,7 +675,7 @@ private struct TrackedPoint {
     var position: CGPoint
     var previousPosition: CGPoint?
     var missingFrames: Int
-    
+
     var velocity: CGVector {
         guard let previousPosition else {
             return CGVector(dx: 0, dy: 0)

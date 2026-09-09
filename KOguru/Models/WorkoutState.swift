@@ -7,25 +7,35 @@
 import Foundation
 import CoreGraphics
 
-enum WorkoutPhase {
+enum WorkoutPhase: String, Codable, Hashable, Sendable {
     case framing
     case counting
     case finished
 }
 
-enum PunchType: String {
+enum PunchType: String, Codable, CaseIterable, Hashable, Sendable {
     case none = "EM GUARDA"
     case jab = "JAB"
     case cross = "DIRETO"
 }
 
-enum Stance {
+enum Stance: String, Codable, CaseIterable, Hashable, Sendable {
     case orthodox
     case southpaw
+
+    var displayName: String {
+        switch self {
+        case .orthodox:
+            return "Ortodoxa"
+        case .southpaw:
+            return "Canhota"
+        }
+    }
 }
 
 struct BodyJoint: Identifiable {
-    let id = UUID()
+    var id: String { name }
+
     let name: String
     let position: CGPoint
 }
