@@ -5,11 +5,13 @@ struct WorkoutSessionView: View {
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var viewModel = WorkoutViewModel()
     @StateObject private var resultsStore = ResultsStore()
+    
     @Environment(\.dismiss) private var dismiss
     @State private var showTutorial = false
+    @State private var showTutorialSheet = false
 
     @State private var result: ResultsModel?
-    @State private var isShowingInfo = false
+    @State private var isShowingTutorial = false
 
     private static let cameraControlQueue = DispatchQueue(
         label: "br.com.koguru.camera-control",
@@ -39,7 +41,13 @@ struct WorkoutSessionView: View {
             UIApplication.shared.isIdleTimerDisabled = false
             stopCamera()
         }
-        .alert("Como a velocidade funciona?", isPresented: $isShowingInfo) {
+        .fullScreenCover(isPresented: $showTutorialSheet) {
+            NavigationStack {
+                TutorialView()
+            }
+        }
+        
+        .alert("Como a velocidade funciona?", isPresented: $isShowingTutorial) {
             Button("Entendi", role: .cancel) {}
         } message: {
             Text(
@@ -89,7 +97,7 @@ struct WorkoutSessionView: View {
                     Spacer()
 
                     Button {
-                        isShowingInfo = true
+                        showTutorialSheet = true
                     } label: {
                         Image(systemName: "info")
                             .font(.system(size: 16, weight: .bold))
