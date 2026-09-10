@@ -44,8 +44,8 @@ struct WorkoutSessionView: View {
         } message: {
             Text(
                 "A câmera usa pose 2D. Por isso, a velocidade é relativa "
-                    + "e aparece em larguras de ombro por segundo (LO/s), "
-                    + "não em metros por segundo."
+                    + "por conta disso a velocidade é dada em m/s."
+                    
             )
         }
     }
@@ -82,7 +82,7 @@ struct WorkoutSessionView: View {
 
                     Spacer()
 
-                    Text("ALINHAMENTO")
+                    Text("JAB E DIRETO")
                         .font(Font.custom("Anton", size: 36))
                         .foregroundColor(.white)
 
@@ -126,10 +126,10 @@ struct WorkoutSessionView: View {
                     Button(action: finishWorkout) {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(.system(size: 26, weight: .bold))
 
                             Text("FINALIZAR")
-                                .font(Font.custom("Anton", size: 36))
+                                .font(Font.custom("Anton", size: 40))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
