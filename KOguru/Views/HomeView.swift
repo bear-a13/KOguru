@@ -19,7 +19,6 @@ struct HomeView: View {
                     .ignoresSafeArea()
                 Spacer()
                 Color(Color.backgroundColorRed)
-                    
                     .frame(maxWidth: .infinity)
             }
             .ignoresSafeArea()
@@ -32,8 +31,10 @@ struct HomeView: View {
                             .font(Font.custom("Anton", size: 40))
                             .bold()
                             .foregroundStyle(.white)
+                            .accessibilityAddTraits(.isHeader)
                         Spacer()
                     }
+                    
                     InformationHomeCard()
                         .padding(.top, -26)
                         .padding(.bottom, 40)
@@ -41,35 +42,40 @@ struct HomeView: View {
                     VStack(spacing: 16) {
                         Text("VAMOS TREINAR!")
                             .font(Font.custom("Anton", size: 28))
-
                             .fontWeight(.bold)
                             .foregroundStyle(Color.white)
                             .padding(2)
+                            .accessibilityAddTraits(.isHeader)
                         
                         Button(action: {
                             isShowingWorkoutSession = true
                         }) {
-                            TrainCard(color: .vermelhoCard,
-                                      titulo: "JAB E DIRETO",
-                                      subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto",
-                                      ImagemBack: "explozaoVermelho"
+                            TrainCard(
+                                color: .vermelhoCard,
+                                titulo: "JAB E DIRETO",
+                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto",
+                                ImagemBack: "explozaoVermelho"
                             )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Treino Jab e Direto. Aprenda a executar os movimentos do boxe.")
+                        .accessibilityHint("Toque duas vezes para iniciar este treino")
+                        
                         Button(action: {
-                                                    isShowingDrillSession = true
-                                                }) {
-                                                    TrainCard(color: .azulCard,
-                                                              titulo: "DRILS",
-                                                              subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
-                                                              ImagemBack: "explozaoAzul"
-                                                    )
-                                                }
-                                                .buttonStyle(.plain)
-//                        TrainCard(color: .amareloCard,
-//                                  titulo: "MARIA LUIZA",
-//                                  subTitulo: "Aprenda a fazer o verdadeiro design com amestre.",
-//                                  ImagemBack: "explozaoAmarelo")
+                            isShowingDrillSession = true
+                        }) {
+                            TrainCard(
+                                color: .azulCard,
+                                titulo: "DRILS",
+                                subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
+                                ImagemBack: "explozaoAzul"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
+                        .accessibilityHint("Toque duas vezes para iniciar esta sessão")
                     }
                     .padding(.bottom, 100)
                     .padding()
@@ -86,7 +92,7 @@ struct HomeView: View {
         }
     }
 }
-//
+
 #Preview {
     HomeView()
 }

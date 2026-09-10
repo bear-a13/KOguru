@@ -105,6 +105,8 @@ struct WorkoutSessionView: View {
                             .frame(width: 40, height: 40)
                             .background(Color.white)
                             .clipShape(Circle())
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("Instruções botão")
                     }
                 }
                 .padding(.horizontal, 20)
@@ -133,10 +135,10 @@ struct WorkoutSessionView: View {
                 if viewModel.currentPhase == .counting {
                     Button(action: finishWorkout) {
                         HStack(spacing: 8) {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 26, weight: .bold))
+                            Image(systemName: "trophy.fill")
+                                .font(.system(size: 20, weight: .bold))
 
-                            Text("FINALIZAR")
+                            Text("RESULTADOS")
                                 .font(Font.custom("Anton", size: 40))
                         }
                         .foregroundColor(.white)
@@ -146,6 +148,7 @@ struct WorkoutSessionView: View {
                         .cornerRadius(16)
                         .padding(.horizontal, 30)
                         .padding(.bottom, 30)
+                        .accessibilityHint("sai da tela de contagem e vai para a tela de resultados")
                     }
                 }
             }
@@ -183,7 +186,7 @@ struct WorkoutSessionView: View {
         }
     }
 
-    // MARK: - Fluxo de resultados 
+    // MARK: - Fluxo de resultados
 
     private func finishWorkout() {
         let generatedResult = viewModel.finishWorkout()
@@ -221,6 +224,7 @@ struct FramingOverlayView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipped()
                 .ignoresSafeArea()
+                .accessibilityLabel("possicione o seu corpo todo na camera no angulo de 45 graus")
 
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -241,6 +245,7 @@ struct CountingOverlayView: View {
                     .font(Font.custom("Sedgwick Ave Display", size: 110))
                     .foregroundColor(.white)
                     .shadow(radius: 40)
+                
 
                 if lastPunch != .none {
                     Text(lastPunch.rawValue)

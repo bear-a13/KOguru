@@ -124,6 +124,7 @@ struct ResultsView: View {
             ResultSummaryCard(
                 title: "VELOCIDADE",
                 value: formattedMaximumSpeed,
+                
                 unit: result.speedUnit.symbol.uppercased(),
                 systemImage: "wind",
                 accentColor: Color(
@@ -155,12 +156,12 @@ struct ResultsView: View {
 
     private var finishButton: some View {
         Button(action: onDone) {
-            HStack(spacing: 14) {
+            HStack(spacing: 8) {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 29, weight: .black))
+                    .font(.system(size: 26, weight: .bold))
 
                 Text("FINALIZAR")
-                    .font(Font.custom("Anton", size: 27))
+                    .font(Font.custom("Anton", size: 40))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -197,11 +198,14 @@ private struct ResultSummaryCard: View {
 
                 VStack(alignment: .leading, spacing: -3) {
                     Text(value)
+
                         .font(Font.custom("Anton", size: 31))
                         .lineLimit(1)
                         .minimumScaleFactor(0.65)
 
                     Text(unit)
+                        .accessibilityLabel("metros por segundo")
+
                         .font(Font.custom("Anton", size: 13))
                         .lineLimit(1)
                         .minimumScaleFactor(0.70)
