@@ -2,12 +2,13 @@ import SwiftUI
 import AVFoundation
 
 struct WorkoutSessionView: View {
+    @AppStorage("hasSeenJabTutorial") private var hasSeenTutorial = false
+    
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var viewModel = WorkoutViewModel()
     @StateObject private var resultsStore = ResultsStore()
     
     @Environment(\.dismiss) private var dismiss
-    @State private var showTutorial = false
     @State private var showTutorialSheet = false
 
     @State private var result: ResultsModel?
@@ -17,8 +18,25 @@ struct WorkoutSessionView: View {
         label: "br.com.koguru.camera-control",
         qos: .userInitiated
     )
-
+    
     var body: some View {
+            ZStack {
+                if hasSeenTutorial {
+                    mainWorkoutContent
+                        .transition(.opacity)
+                } else {
+                    TutorialView {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            hasSeenTutorial = true
+                        }
+                    }
+                    .transition(.opacity)
+                }
+            }
+            .navigationBarHidden(true)
+        }
+
+    private var mainWorkoutContent: some View {
         Group {
             if let result {
                 ResultsView(
