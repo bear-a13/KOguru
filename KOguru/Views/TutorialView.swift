@@ -16,10 +16,8 @@ struct TutorialView: View {
         ZStack(alignment: .bottom) {
             Color(Color.backgroundColorBlue)
                 .ignoresSafeArea()
-                .frame(maxWidth: .infinity)
-                .ignoresSafeArea()
             
-            ScrollView(){
+            ScrollView {
                 VStack(spacing: 0) {
                     Text("SOBRE O TREINO")
                         .font(.custom("Anton", size: 22))
@@ -40,7 +38,7 @@ struct TutorialView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    VStack{
+                    VStack {
                         CarouselView()
                     }
                     
@@ -50,8 +48,9 @@ struct TutorialView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 9)
-                    VStack{
-                        HStack{
+                    
+                    VStack {
+                        HStack {
                             Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
                                 .foregroundColor(.white)
                                 .font(.system(size: 19))
@@ -61,7 +60,8 @@ struct TutorialView: View {
                                 .font(.system(size: 19))
                         }
                         .padding(.bottom, 10)
-                        HStack{
+                        
+                        HStack {
                             Image(systemName: "person.fill.viewfinder")
                                 .foregroundColor(.white)
                                 .font(.system(size: 19))
@@ -71,7 +71,8 @@ struct TutorialView: View {
                                 .font(.system(size: 19))
                         }
                         .padding(.bottom, 10)
-                        HStack{
+                        
+                        HStack {
                             Image(systemName: "figure.boxing")
                                 .foregroundStyle(.white)
                                 .font(.system(size: 19))
@@ -80,25 +81,19 @@ struct TutorialView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.system(size: 19))
                         }
-                        .padding(.bottom, 60)
                     }
-                    
+                
                     Spacer()
-                    // TODO: tem que fazer o botão ficar acima de qualquer bloco que esteja por trás
+                        .frame(height: 100)
                 }
                 .padding()
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        
-                    }
-                }
             }
+            
             HStack(alignment: .center) {
                 Button(action: {
                     dismiss()
                 }) {
-                    HStack{
+                    HStack {
                         Image(systemName: "camera.fill")
                             .font(.system(size: 24))
                         
@@ -115,6 +110,7 @@ struct TutorialView: View {
                 }
             }
             .padding(.horizontal, 17)
+            .padding(.bottom, 20)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -135,9 +131,7 @@ struct TutorialView: View {
                     .foregroundColor(.white)
                 }
             }
-            
         }
-        
     }
 }
 
@@ -149,15 +143,14 @@ struct SquareLabelStyle: LabelStyle {
             configuration.title
                 .font(.caption)
         }
-        .frame(width: 90, height: 90) // Hardcoded 1:1 square frame
+        .frame(width: 90, height: 90)
         .background(Color.blue.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
-
-#Preview{
-    NavigationStack{
+#Preview {
+    NavigationStack {
         TutorialView()
     }
 }
