@@ -13,7 +13,7 @@ struct TutorialView: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: 0) {
-                // MARK: - CABEÇALHO
+                // MARK: - CABEÇALHO CUSTOMIZADO
                 HStack {
                     if onStart == nil {
                         Button {
@@ -24,6 +24,8 @@ struct TutorialView: View {
                                 .foregroundColor(.white)
                                 .frame(width: 44, height: 44, alignment: .leading)
                         }
+                        .accessibilityLabel("Voltar")
+                        .accessibilityHint("Retorna à tela anterior")
                     } else {
                         Spacer().frame(width: 44)
                     }
@@ -34,6 +36,7 @@ struct TutorialView: View {
                         .font(.custom("Anton", size: 24))
                         .foregroundColor(.white)
                         .bold()
+                        .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
                     
@@ -141,35 +144,13 @@ struct TutorialView: View {
                     .background(Color(red: 0.65, green: 0.15, blue: 0.13))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-                .accessibilityLabel("Continuar para exercício")
-                .accessibilityHint("Toque duas vezes para fechar o tutorial e iniciar a câmera")
+                .accessibilityLabel(onStart != nil ? "Continuar para exercício" : "Fechar instruções")
+                .accessibilityHint(onStart != nil ? "Toque duas vezes para fechar o tutorial e iniciar a câmera" : "Retorna ao exercício")
             }
             .padding(.horizontal, 17)
             .padding(.bottom, 20)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("INSTRUÇÕES")
-                    .font(.custom("Anton", size: 24))
-                    .foregroundColor(.white)
-                    .bold()
-                    .accessibilityAddTraits(.isHeader)
-            }
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .foregroundColor(.white)
-                }
-                .accessibilityLabel("Voltar")
-                .accessibilityHint("Retorna à tela anterior")
-            }
-        }
+        .navigationBarHidden(true)
     }
 }
 
@@ -181,6 +162,8 @@ struct SquareLabelStyle: LabelStyle {
             configuration.title
                 .font(.caption)
         }
-        .navigationBarHidden(true)
+        .frame(width: 90, height: 90)
+        .background(Color.blue.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
