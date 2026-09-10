@@ -10,6 +10,7 @@ struct TutorialView: View {
         ZStack(alignment: .bottom) {
             Color(Color.backgroundColorBlue)
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
             
             VStack(spacing: 0) {
                 // MARK: - CABEÇALHO
@@ -140,9 +141,45 @@ struct TutorialView: View {
                     .background(Color(red: 0.65, green: 0.15, blue: 0.13))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .accessibilityLabel("Continuar para exercício")
+                .accessibilityHint("Toque duas vezes para fechar o tutorial e iniciar a câmera")
             }
             .padding(.horizontal, 17)
             .padding(.bottom, 20)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("INSTRUÇÕES")
+                    .font(.custom("Anton", size: 24))
+                    .foregroundColor(.white)
+                    .bold()
+                    .accessibilityAddTraits(.isHeader)
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                }
+                .accessibilityLabel("Voltar")
+                .accessibilityHint("Retorna à tela anterior")
+            }
+        }
+    }
+}
+
+struct SquareLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: 8) {
+            configuration.icon
+                .font(.title)
+            configuration.title
+                .font(.caption)
         }
         .navigationBarHidden(true)
     }
