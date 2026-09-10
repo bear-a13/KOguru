@@ -14,7 +14,7 @@ final class OnboardingViewModel: ObservableObject {
     let pages: [OnboardingPage] = [
         OnboardingPage(
             id: 0,
-            imageName: "onboarding_ringue",
+            imageName: "onboarding-ringue",
             title: "TUDO PRONTO PARA ENTRAR NO RINGUE?",
             paragraphs: [
                 "O KOguru foi feito para acompanhar enquanto você aprende, pratica e evolui.",
@@ -24,7 +24,7 @@ final class OnboardingViewModel: ObservableObject {
         ),
         OnboardingPage(
             id: 1,
-            imageName: "onboarding_saco",
+            imageName: "onboarding-pancada",
             title: "ROUND ONE, FIGHT!",
             paragraphs: [
                 "É só colocar o celular numa superfície firme e ajustar sua posição.",
