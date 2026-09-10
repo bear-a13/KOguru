@@ -14,7 +14,7 @@ enum PunchSpeedUnit: String, Codable, Sendable {
     var symbol: String {
         switch self {
         case .shoulderWidthsPerSecond:
-            return "LO/s"
+            return "m/s"
         case .metersPerSecond:
             return "m/s"
         }

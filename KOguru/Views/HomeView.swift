@@ -66,10 +66,10 @@ struct HomeView: View {
                                                     )
                                                 }
                                                 .buttonStyle(.plain)
-                        TrainCard(color: .amareloCard,
-                                  titulo: "MARIA LUIZA",
-                                  subTitulo: "Aprenda a fazer o verdadeiro design com amestre.",
-                                  ImagemBack: "explozaoAmarelo")
+//                        TrainCard(color: .amareloCard,
+//                                  titulo: "MARIA LUIZA",
+//                                  subTitulo: "Aprenda a fazer o verdadeiro design com amestre.",
+//                                  ImagemBack: "explozaoAmarelo")
                     }
                     .padding(.bottom, 100)
                     .padding()
