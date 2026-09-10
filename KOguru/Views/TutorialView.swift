@@ -16,6 +16,7 @@ struct TutorialView: View {
         ZStack(alignment: .bottom) {
             Color(Color.backgroundColorBlue)
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
             
             ScrollView {
                 VStack(spacing: 0) {
@@ -25,6 +26,7 @@ struct TutorialView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 9)
+                        .accessibilityAddTraits(.isHeader)
                     
                     Text("Você irá praticar os golpes jab e direto, trabalhando precisão e técnica. Seus golpes serão identificados e analisados.")
                         .foregroundStyle(.white)
@@ -37,6 +39,7 @@ struct TutorialView: View {
                         .foregroundColor(.white)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityAddTraits(.isHeader)
                     
                     VStack {
                         CarouselView()
@@ -48,6 +51,7 @@ struct TutorialView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 9)
+                        .accessibilityAddTraits(.isHeader)
                     
                     VStack {
                         HStack {
@@ -60,6 +64,7 @@ struct TutorialView: View {
                                 .font(.system(size: 19))
                         }
                         .padding(.bottom, 10)
+                        .accessibilityElement(children: .combine)
                         
                         HStack {
                             Image(systemName: "person.fill.viewfinder")
@@ -71,6 +76,7 @@ struct TutorialView: View {
                                 .font(.system(size: 19))
                         }
                         .padding(.bottom, 10)
+                        .accessibilityElement(children: .combine)
                         
                         HStack {
                             Image(systemName: "figure.boxing")
@@ -82,6 +88,7 @@ struct TutorialView: View {
                                 .font(.system(size: 19))
                         }
                     }
+                    .accessibilityElement(children: .combine)
                 
                     Spacer()
                         .frame(height: 100)
@@ -108,6 +115,8 @@ struct TutorialView: View {
                     .background(Color(red: 0.65, green: 0.15, blue: 0.13))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .accessibilityLabel("Continuar para exercício")
+                .accessibilityHint("Toque duas vezes para fechar o tutorial e iniciar a câmera")
             }
             .padding(.horizontal, 17)
             .padding(.bottom, 20)
@@ -119,6 +128,7 @@ struct TutorialView: View {
                     .font(.custom("Anton", size: 24))
                     .foregroundColor(.white)
                     .bold()
+                    .accessibilityAddTraits(.isHeader)
             }
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -130,6 +140,8 @@ struct TutorialView: View {
                     }
                     .foregroundColor(.white)
                 }
+                .accessibilityLabel("Voltar")
+                .accessibilityHint("Retorna à tela anterior")
             }
         }
     }
