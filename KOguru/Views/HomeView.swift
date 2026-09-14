@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct HomeView: View {
-    // 1. Variável de estado para controlar a abertura da câmera
     @State private var isShowingWorkoutSession = false
     @State private var isShowingDrillSession = false
     
@@ -17,35 +16,39 @@ struct HomeView: View {
             VStack {
                 Color(Color.backgroundColorBlue)
                     .ignoresSafeArea()
-                Spacer()
                 Color(Color.backgroundColorRed)
                     .frame(maxWidth: .infinity)
             }
             .ignoresSafeArea()
+            .accessibilityHidden(true)
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     HStack {
-                        Text("EAI TA PRONTO?")
+                        Text("EAI, TA PRONTO?")
                             .padding(.horizontal, 16)
-                            .font(Font.custom("Anton", size: 40))
+                            .font(.custom("Anton", size: 40, relativeTo: .largeTitle))
                             .bold()
                             .foregroundStyle(.white)
                             .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h1)
                         Spacer()
                     }
+                    .accessibilityElement(children: .combine)
                     
                     InformationHomeCard()
+                        .padding(.horizontal, 16)
                         .padding(.top, -26)
                         .padding(.bottom, 40)
                     
                     VStack(spacing: 16) {
                         Text("VAMOS TREINAR!")
-                            .font(Font.custom("Anton", size: 28))
+                            .font(.custom("Anton", size: 28, relativeTo: .title))
                             .fontWeight(.bold)
                             .foregroundStyle(Color.white)
                             .padding(2)
                             .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h2)
                         
                         Button(action: {
                             isShowingWorkoutSession = true
@@ -53,15 +56,18 @@ struct HomeView: View {
                             TrainCard(
                                 color: .vermelhoCard,
                                 titulo: "JAB E DIRETO",
-                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto",
+                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto.",
                                 ImagemBack: "explozaoVermelho"
                             )
+                            .accessibilityHidden(true)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityElement(children: .combine)
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel("Treino Jab e Direto. Aprenda a executar os movimentos do boxe.")
                         .accessibilityHint("Toque duas vezes para iniciar este treino")
+                        .accessibilityAddTraits(.isButton)
                         
+                        // Botão 2: Drills
                         Button(action: {
                             isShowingDrillSession = true
                         }) {
@@ -71,11 +77,13 @@ struct HomeView: View {
                                 subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
                                 ImagemBack: "explozaoAzul"
                             )
+                            .accessibilityHidden(true)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityElement(children: .combine)
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
+                        .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)
                     .padding()
