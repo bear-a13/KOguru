@@ -215,18 +215,6 @@ struct FramingOverlayView: View {
                 .clipped()
                 .ignoresSafeArea()
                 .accessibilityLabel("possicione o seu corpo todo na camera no angulo de 45 graus")
-
-            Text(isFramed ? "PERFEITO!" : "AJUSTE-SE AO QUADRO")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    isFramed
-                        ? Color.green.opacity(0.85)
-                        : Color.red.opacity(0.85)
-                )
-                .animation(.easeInOut(duration: 0.25), value: isFramed)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
