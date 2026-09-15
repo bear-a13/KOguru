@@ -184,10 +184,10 @@ struct OnboardingView: View {
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
-                    .padding(.horizontal, 17)
-                    .frame(height: 56)
+                    .padding(.horizontal, 20)
+                    .frame(height: 57)
                     .background(actionColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .buttonStyle(.plain)
             .accessibilityHint("Conclui a apresentação e abre o aplicativo")

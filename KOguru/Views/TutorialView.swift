@@ -122,30 +122,21 @@ struct TutorialView: View {
             
             // MARK: - BOTÃO INFERIOR
             HStack(alignment: .center) {
-                Button(action: {
-                    if let onStart = onStart {
-                        onStart()
-                    } else {
-                        dismiss()
+                PrimaryActionButton(
+                    title: onStart != nil ? "CONTINUAR PARA EXERCÍCIO" : "FECHAR INSTRUÇÕES",
+                    systemImage: onStart != nil ? "figure.boxing" : "xmark.circle",
+                    backgroundColor: Color(red: 0.65, green: 0.15, blue: 0.13),
+                    accessibilityHint: onStart != nil
+                        ? "Toque duas vezes para fechar o tutorial e iniciar a câmera"
+                        : "Retorna ao exercício",
+                    action: {
+                        if let onStart = onStart {
+                            onStart()
+                        } else {
+                            dismiss()
+                        }
                     }
-                }) {
-                    HStack {
-                        Image(systemName: onStart != nil ? "figure.boxing" : "xmark.circle")
-                            .font(.system(size: 24))
-                        
-                        Text(onStart != nil ? "CONTINUAR PARA EXERCÍCIO" : "FECHAR INSTRUÇÕES")
-                            .font(Font.custom("Anton", size: 39))
-                            .fontWeight(.bold)
-                            .tracking(0.5)
-                    }
-                    .foregroundColor(.white)
-                    .padding(.vertical, 16)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(red: 0.65, green: 0.15, blue: 0.13))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .accessibilityLabel(onStart != nil ? "Continuar para exercício" : "Fechar instruções")
-                .accessibilityHint(onStart != nil ? "Toque duas vezes para fechar o tutorial e iniciar a câmera" : "Retorna ao exercício")
+                )
             }
             .padding(.horizontal, 17)
             .padding(.bottom, 20)
