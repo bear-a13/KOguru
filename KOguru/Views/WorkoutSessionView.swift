@@ -69,9 +69,7 @@ struct WorkoutSessionView: View {
             Button("Entendi", role: .cancel) {}
         } message: {
             Text(
-                "A câmera usa pose 2D. Por isso, a velocidade é relativa "
-                    + "por conta disso a velocidade é dada em m/s."
-                    
+                "A câmera usa pose 2D, então a velocidade é relativa ao seu corpo e é informada em m/s."
             )
         }
     }
@@ -97,14 +95,7 @@ struct WorkoutSessionView: View {
             VStack {
                 // CABEÇALHO
                 HStack {
-                    Button(action: closeWorkout) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(width: 40, height: 40)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                    }
+                    CircleIconButton(systemName: "xmark", action: closeWorkout)
 
                     Spacer()
 
@@ -114,18 +105,8 @@ struct WorkoutSessionView: View {
 
                     Spacer()
 
-                    Button {
-                        showTutorialSheet = true
-                    } label: {
-                        Image(systemName: "info")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(width: 40, height: 40)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .accessibilityElement(children: .combine)
-                            .accessibilityLabel("Instruções botão")
-                    }
+CircleIconButton(systemName: "info") { showTutorialSheet = true }
+                        .accessibilityLabel("Instruções botão")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 50)
@@ -151,23 +132,14 @@ struct WorkoutSessionView: View {
                 Spacer()
 
                 if viewModel.currentPhase == .counting {
-                    Button(action: finishWorkout) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "trophy.fill")
-                                .font(.system(size: 20, weight: .bold))
-
-                            Text("RESULTADOS")
-                                .font(Font.custom("Anton", size: 40))
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 54)
-                        .background(Color.vermelhoCard)
-                        .cornerRadius(16)
-                        .padding(.horizontal, 30)
-                        .padding(.bottom, 30)
-                        .accessibilityHint("sai da tela de contagem e vai para a tela de resultados")
-                    }
+                    PrimaryActionButton(
+                        title: "RESULTADOS",
+                        systemImage: "trophy.fill",
+                        accessibilityHint: "Sai da tela de contagem e vai para a tela de resultados",
+                        action: finishWorkout
+                    )
+                    .padding(.horizontal, 30)
+                    .padding(.bottom, 30)
                 }
             }
         }
@@ -243,7 +215,6 @@ struct FramingOverlayView: View {
                 .clipped()
                 .ignoresSafeArea()
                 .accessibilityLabel("possicione o seu corpo todo na camera no angulo de 45 graus")
-
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
@@ -278,36 +249,5 @@ struct CountingOverlayView: View {
                 Spacer()
             }
         }
-    }
-}
-
-struct FinishedOverlayView: View {
-    var totalPunches: Int
-    var onRestart: () -> Void
-
-    var body: some View {
-        VStack(spacing: 18) {
-            Text("TREINO FINALIZADO")
-                .font(.system(size: 22, weight: .black))
-                .foregroundColor(.black)
-
-            Text("\(totalPunches) socos registrados")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.black.opacity(0.8))
-
-            Button(action: onRestart) {
-                Text("REINICIAR")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 30)
-                    .padding(.vertical, 12)
-                    .background(Color.black)
-                    .cornerRadius(12)
-            }
-        }
-        .padding(30)
-        .background(Color.white.opacity(0.95))
-        .cornerRadius(24)
-        .padding(.horizontal, 40)
     }
 }

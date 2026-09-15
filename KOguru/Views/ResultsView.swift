@@ -10,13 +10,15 @@ import Foundation
 struct ResultsView: View {
     let result: ResultsModel
     let onDone: () -> Void
+    let onRestart: () -> Void
 
     init(
         result: ResultsModel,
-        onRestart _: @escaping () -> Void = {},
+        onRestart: @escaping () -> Void = {},
         onDone: @escaping () -> Void = {}
     ) {
         self.result = result
+        self.onRestart = onRestart
         self.onDone = onDone
     }
 
@@ -49,7 +51,7 @@ struct ResultsView: View {
 
                         Spacer(minLength: 10)
 
-                        finishButton
+                        actions
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, 18)
@@ -154,23 +156,24 @@ struct ResultsView: View {
 
     // MARK: - Ação
 
-    private var finishButton: some View {
-        Button(action: onDone) {
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 26, weight: .bold))
+private var actions: some View {
+        VStack(spacing: 12) {
+            PrimaryActionButton(
+                title: "FINALIZAR",
+                systemImage: "checkmark",
+                backgroundColor: buttonColor,
+                accessibilityHint: "Fecha o resultado e retorna para a tela inicial",
+                action: onDone
+            )
 
-                Text("FINALIZAR")
-                    .font(Font.custom("Anton", size: 40))
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 57)
-            .background(buttonColor)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            PrimaryActionButton(
+                title: "TREINAR NOVAMENTE",
+                systemImage: "arrow.counterclockwise",
+                backgroundColor: topBackground,
+                accessibilityHint: "Recomeça o treino do zero",
+                action: onRestart
+            )
         }
-        .buttonStyle(.plain)
-        .accessibilityHint("Fecha o resultado e retorna para a tela inicial")
     }
 }
 

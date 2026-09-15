@@ -1,18 +1,52 @@
 import Foundation
 import CoreGraphics
 
+enum PunchFrame: Equatable {
+    case none
+    case hold(PunchType)
+    case newPunch(PunchType)
+
+    var punch: PunchType {
+        switch self {
+        case .none: return .none
+        case .hold(let type): return type
+        case .newPunch(let type): return type
+        }
+    }
+
+    var shouldCount: Bool {
+        if case .newPunch = self { return true }
+        return false
+    }
+}
+
 struct PunchClassifier {
+    // MARK: - Parâmetros de detecção de golpe
+
     private let punchScoreThreshold: CGFloat = 0.74
     private let scoreDifferenceThreshold: CGFloat = 0.10
     private let requiredStableFrames = 2
     private let guardFramesBeforeReset = 4
+
+    // MARK: - Parâmetros da guarda (regra do negativo)
+
+    private let guardMaxElbowAngle: CGFloat = 135
+    private let guardMaxWristDrop = 0.5
+    private let guardMaxReach = 1.15
+
+    // MARK: - Estado interno de estabilização
 
     private var pendingPunch: PunchType = .none
     private var lastDetectedPunch: PunchType = .none
     private var stableFrameCount = 0
     private var guardFrameCount = 0
 
-    mutating func detect(
+    // MARK: - Gate de retorno à guarda
+
+    private var awaitingReturnToGuard = true
+    private var hasRegisteredPunch = false
+
+    mutating func analyze(
         leftShoulder: CGPoint,
         leftElbow: CGPoint,
         leftWrist: CGPoint,
@@ -21,7 +55,28 @@ struct PunchClassifier {
         rightWrist: CGPoint,
         shoulderWidth: CGFloat,
         stance: Stance
-    ) -> PunchType {
+    ) -> PunchFrame {
+        let guarded = isInGuard(
+            leftShoulder: leftShoulder,
+            leftElbow: leftElbow,
+            leftWrist: leftWrist,
+            rightShoulder: rightShoulder,
+            rightElbow: rightElbow,
+            rightWrist: rightWrist,
+            shoulderWidth: shoulderWidth
+        )
+
+        // Enquanto aguarda o retorno à guarda, nenhum novo golpe conta.
+        if awaitingReturnToGuard {
+            if guarded {
+                awaitingReturnToGuard = false
+                hasRegisteredPunch = false
+                resetStabilization()
+            } else {
+                return .hold(lastDetectedPunch)
+            }
+        }
+
         let leftScore = armExtensionScore(
             shoulder: leftShoulder,
             elbow: leftElbow,
@@ -42,10 +97,79 @@ struct PunchClassifier {
             stance: stance
         )
 
-        return stabilize(detected)
+        let stabilized = stabilize(detected)
+
+        // Golpe não estabilizado: nada acontece.
+        if stabilized == .none {
+            return .none
+        }
+
+        // Mesmo golpe já registrado: continua exibindo, mas não conta de novo.
+        if hasRegisteredPunch {
+            return .hold(stabilized)
+        }
+
+        // Novo golpe vindo da guarda: registra e aguarda o retorno.
+        hasRegisteredPunch = true
+        awaitingReturnToGuard = true
+        return .newPunch(stabilized)
     }
 
-    mutating func stabilize(_ detected: PunchType) -> PunchType {
+    mutating func loseTracking() -> PunchFrame {
+        .none
+    }
+
+    mutating func reset() {
+        pendingPunch = .none
+        lastDetectedPunch = .none
+        stableFrameCount = 0
+        guardFrameCount = 0
+        awaitingReturnToGuard = true
+        hasRegisteredPunch = false
+    }
+
+    // MARK: - Guarda (regra do negativo)
+
+    private func isInGuard(
+        leftShoulder: CGPoint,
+        leftElbow: CGPoint,
+        leftWrist: CGPoint,
+        rightShoulder: CGPoint,
+        rightElbow: CGPoint,
+        rightWrist: CGPoint,
+        shoulderWidth: CGFloat
+    ) -> Bool {
+        armIsInGuard(
+            shoulder: leftShoulder,
+            elbow: leftElbow,
+            wrist: leftWrist,
+            shoulderWidth: shoulderWidth
+        ) && armIsInGuard(
+            shoulder: rightShoulder,
+            elbow: rightElbow,
+            wrist: rightWrist,
+            shoulderWidth: shoulderWidth
+        )
+    }
+
+    private func armIsInGuard(
+        shoulder: CGPoint,
+        elbow: CGPoint,
+        wrist: CGPoint,
+        shoulderWidth: CGFloat
+    ) -> Bool {
+        let elbowAngle = WorkoutMath.jointAngle(shoulder, elbow, wrist)
+        let isElbowBent = elbowAngle <= guardMaxElbowAngle
+        let wristDrop = wrist.y - shoulder.y
+        let isWristHigh = wristDrop <= shoulderWidth * guardMaxWristDrop
+        let isFolded = WorkoutMath.distance(shoulder, wrist)
+            <= shoulderWidth * guardMaxReach
+        return isElbowBent && isWristHigh && isFolded
+    }
+
+    // MARK: - Estabilização
+
+    private mutating func stabilize(_ detected: PunchType) -> PunchType {
         if detected == .none {
             guardFrameCount += 1
             stableFrameCount = 0
@@ -71,12 +195,14 @@ struct PunchClassifier {
         return lastDetectedPunch
     }
 
-    mutating func reset() {
+    private mutating func resetStabilization() {
         pendingPunch = .none
         lastDetectedPunch = .none
         stableFrameCount = 0
         guardFrameCount = 0
     }
+
+    // MARK: - Classificação biomecânica
 
     private func armExtensionScore(
         shoulder: CGPoint,
