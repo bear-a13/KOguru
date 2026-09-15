@@ -27,7 +27,6 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
 
     private var workoutStartedAt: Date?
     private var workoutSampleStartTimestamp: TimeInterval?
-    private var hasRegisteredCurrentPunch = false
 
     // MARK: - Inicialização
 
@@ -100,8 +99,14 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             .nose,
             .leftShoulder,
             .rightShoulder,
+            .leftElbow,
+            .rightElbow,
             .leftWrist,
             .rightWrist,
+            .leftHip,
+            .rightHip,
+            .leftKnee,
+            .rightKnee,
             .leftAnkle,
             .rightAnkle
         ]
@@ -160,14 +165,14 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
               let rightShoulder = trackedPoints["RS"],
               let rightWrist = trackedPoints["RW"],
               let rightElbow = trackedPoints["RE"] else {
-            let finalPunch = classifier.stabilize(.none)
+            let frame = classifier.loseTracking()
             publish(
-                detected: finalPunch,
+                frame: frame,
                 joints: joints,
                 detectedSpeed: nil,
                 timestamp: timestamp
             )
-            speedTracker.resetWindow(after: finalPunch)
+            speedTracker.resetWindow(after: frame.punch)
             return
         }
 
@@ -184,7 +189,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             timestamp: timestamp
         )
 
-        let finalPunch = classifier.detect(
+        let frame = classifier.analyze(
             leftShoulder: leftShoulder,
             leftElbow: leftElbow,
             leftWrist: leftWrist,
@@ -195,24 +200,24 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             stance: userStance
         )
         let detectedSpeed = speedTracker.speedForPunch(
-            finalPunch,
+            frame.punch,
             stance: userStance
         )
 
         publish(
-            detected: finalPunch,
+            frame: frame,
             joints: joints,
             detectedSpeed: detectedSpeed,
             timestamp: timestamp
         )
 
-        speedTracker.resetWindow(after: finalPunch)
+        speedTracker.resetWindow(after: frame.punch)
     }
 
     // MARK: - Publicação + registro de resultado
 
     private func publish(
-        detected: PunchType,
+        frame: PunchFrame,
         joints: [BodyJoint],
         detectedSpeed: Double?,
         timestamp: TimeInterval
@@ -223,26 +228,22 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
         )
 
         DispatchQueue.main.async {
-            // Mantém exatamente a condição do contador antigo.
-            if detected != .none && !self.hasRegisteredCurrentPunch {
+            if frame.shouldCount {
                 let speed = detectedSpeed ?? 0
 
                 self.punchCount += 1
-                self.hasRegisteredCurrentPunch = true
                 self.punchResults.append(
                     PunchResult(
-                        type: detected,
+                        type: frame.punch,
                         timestamp: relativeTimestamp,
                         peakSpeed: speed,
                         duration: nil,
                         evaluation: nil
                     )
                 )
-            } else if detected == .none {
-                self.hasRegisteredCurrentPunch = false
             }
 
-            self.lastDetectedPunch = detected
+            self.lastDetectedPunch = frame.punch
             self.bodyJoints = joints
         }
     }
@@ -263,7 +264,6 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
 
         workoutStartedAt = nil
         workoutSampleStartTimestamp = nil
-        hasRegisteredCurrentPunch = false
     }
 
     @discardableResult
