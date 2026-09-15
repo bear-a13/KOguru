@@ -134,7 +134,7 @@ struct TutorialView: View {
                             .font(.system(size: 24))
                         
                         Text(onStart != nil ? "CONTINUAR PARA EXERCÍCIO" : "FECHAR INSTRUÇÕES")
-                            .font(Font.custom("Anton", size: 24))
+                            .font(Font.custom("Anton", size: 39))
                             .fontWeight(.bold)
                             .tracking(0.5)
                     }

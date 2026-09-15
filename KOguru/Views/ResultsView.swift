@@ -161,7 +161,7 @@ struct ResultsView: View {
                     .font(.system(size: 26, weight: .bold))
 
                 Text("FINALIZAR")
-                    .font(Font.custom("Anton", size: 40))
+                    .font(Font.custom("Anton", size: 30))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)

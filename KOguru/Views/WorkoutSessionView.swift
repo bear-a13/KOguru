@@ -157,7 +157,7 @@ struct WorkoutSessionView: View {
                                 .font(.system(size: 20, weight: .bold))
 
                             Text("RESULTADOS")
-                                .font(Font.custom("Anton", size: 40))
+                                .font(Font.custom("Anton", size: 30))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
