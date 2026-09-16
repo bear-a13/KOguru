@@ -25,7 +25,7 @@ struct HomeView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     HStack {
-                        Text("EAI, TA PRONTO?")
+                        Text("E AI, TÁ PRONTO?")
                             .padding(.horizontal, 16)
                             .font(.custom("Anton", size: 40, relativeTo: .largeTitle))
                             .bold()
@@ -73,7 +73,7 @@ struct HomeView: View {
                         }) {
                             TrainCard(
                                 color: .azulCard,
-                                titulo: "DRILS",
+                                titulo: "DRILLS",
                                 subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
                                 ImagemBack: "explozaoAzul"
                             )

@@ -7,12 +7,14 @@ struct CircleIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.black)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.white)
                 .frame(width: 40, height: 40)
-                .background(Color.white)
-                .clipShape(Circle())
+                .padding(5)
+                
+                
+
         }
-        .buttonStyle(.plain)
+        .glassEffect(.regular, in: .rect(cornerRadius: 36))
     }
 }
