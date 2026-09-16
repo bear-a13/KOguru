@@ -15,32 +15,15 @@ struct TutorialView: View {
             VStack(spacing: 0) {
                 // MARK: - CABEÇALHO CUSTOMIZADO
                 HStack {
-                    if onStart == nil {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 44, height: 44, alignment: .leading)
-                        }
-                        .accessibilityLabel("Voltar")
-                        .accessibilityHint("Retorna à tela anterior")
-                    } else {
-                        Spacer().frame(width: 44)
-                    }
-                    
                     Spacer()
                     
                     Text("INSTRUÇÕES")
-                        .font(.custom("Anton", size: 24))
+                        .font(.custom("Anton", size: 30))
                         .foregroundColor(.white)
                         .bold()
                         .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
-                    
-                    Spacer().frame(width: 44)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -49,7 +32,7 @@ struct TutorialView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         Text("SOBRE O TREINO")
-                            .font(.custom("Anton", size: 22))
+                            .font(.custom("Anton", size: 26))
                             .foregroundColor(.white)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -62,7 +45,7 @@ struct TutorialView: View {
                             .padding(.bottom, 9)
                         
                         Text("TUTORIAL")
-                            .font(.custom("Anton", size: 22))
+                            .font(.custom("Anton", size: 26))
                             .foregroundColor(.white)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -72,7 +55,7 @@ struct TutorialView: View {
                         }
                         
                         Text("ANTES DE INICIAR, LEMBRE-SE:")
-                            .font(.custom("Anton", size: 22))
+                            .font(.custom("Anton", size: 26))
                             .foregroundColor(.white)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -157,4 +140,8 @@ struct SquareLabelStyle: LabelStyle {
         .background(Color.blue.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
+}
+
+#Preview {
+    TutorialView()
 }
