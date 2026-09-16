@@ -57,7 +57,7 @@ struct HomeView: View {
                                 color: .vermelhoCard,
                                 titulo: "JAB E DIRETO",
                                 subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto.",
-                                ImagemBack: "explozaoVermelho"
+                                ImagemBack: "explosaoVermelho"
                             )
                             .accessibilityHidden(true)
                         }
@@ -75,7 +75,7 @@ struct HomeView: View {
                                 color: .azulCard,
                                 titulo: "DRILLS",
                                 subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
-                                ImagemBack: "explozaoAzul"
+                                ImagemBack: "explosaoAzul"
                             )
                             .accessibilityHidden(true)
                         }
