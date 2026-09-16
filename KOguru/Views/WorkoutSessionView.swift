@@ -105,7 +105,7 @@ struct WorkoutSessionView: View {
 
                     Spacer()
 
-CircleIconButton(systemName: "info") { showTutorialSheet = true }
+CircleIconButton(systemName: "book.pages") { showTutorialSheet = true }
                         .accessibilityLabel("Instruções botão")
                 }
                 .padding(.horizontal, 20)
