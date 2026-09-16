@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct DrillSessionView: View {
     @StateObject private var cameraManager = CameraManager()
@@ -6,7 +7,54 @@ struct DrillSessionView: View {
     @StateObject private var drillManager = DrillManager()
     @Environment(\.dismiss) private var dismiss
 
+    @State private var drillResult: DrillResultsModel?
+
+    private static let cameraControlQueue = DispatchQueue(
+        label: "br.com.koguru.drill-camera-control",
+        qos: .userInitiated
+    )
+
     var body: some View {
+        Group {
+            if let drillResult {
+                DrillResultsView(
+                    result: drillResult,
+                    onRestart: restartDrill,
+                    onDone: closeDrill
+                )
+                .transition(.opacity)
+            } else {
+                cameraContent
+            }
+        }
+        .navigationBarHidden(true)
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true
+            configureCamera()
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            drillManager.stopDrill()
+            stopCamera()
+        }
+        .onChange(of: workoutViewModel.currentPhase) { newPhase in
+            if newPhase == .counting {
+                drillManager.startDrill()
+            }
+        }
+        .onChange(of: workoutViewModel.lastDetectedPunch) { newPunch in
+            drillManager.processPunch(newPunch)
+        }
+        .onChange(of: drillManager.isRoundOver) { isOver in
+            if isOver {
+                finishDrill()
+            }
+        }
+    }
+
+    // MARK: - Interface da câmera
+
+    private var cameraContent: some View {
         ZStack {
             CameraPreview(session: cameraManager.session)
                 .ignoresSafeArea()
@@ -30,14 +78,14 @@ struct DrillSessionView: View {
                         .accessibilityHint("Toque duas vezes para parar o treino e sair")
 
                     Spacer()
-                    
+
                     Text("DRILL")
                         .font(Font.custom("Anton", size: 36))
                         .foregroundColor(.white)
                         .accessibilityAddTraits(.isHeader)
-                    
+
                     Spacer()
-                    
+
                     Color.clear.frame(width: 40, height: 40)
                         .accessibilityHidden(true)
                 }
@@ -51,31 +99,34 @@ struct DrillSessionView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
-        .onAppear {
-            UIApplication.shared.isIdleTimerDisabled = true
-
-            cameraManager.frameDelegate = { sampleBuffer in
-                workoutViewModel.processFrame(sampleBuffer)
-            }
-        }
-        .onDisappear {
-            UIApplication.shared.isIdleTimerDisabled = false
-        }
-        .onChange(of: workoutViewModel.currentPhase) { newPhase in
-            if newPhase == .counting {
-                drillManager.startDrill()
-            }
-        }
-        .onChange(of: workoutViewModel.lastDetectedPunch) { newPunch in
-            drillManager.processPunch(newPunch)
-        }
     }
 
     // MARK: - Overlay
 
     private var drillOverlay: some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(alignment: .center, spacing: 14) {
+            Text(formattedTime)
+                .font(Font.custom("Anton", size: 34))
+                .foregroundColor(.white)
+                .monospacedDigit()
+                .padding(.horizontal, 18)
+                .padding(.vertical, 6)
+                .background(Color.black.opacity(0.45))
+                .cornerRadius(14)
+                .accessibilityLabel("Tempo restante: \(Int(drillManager.timeRemaining)) segundos")
+
+            if drillManager.lastWasWrongPunch {
+                Text("ERROU! REINICIANDO COMBO")
+                    .font(.system(size: 22, weight: .black))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.red.opacity(0.85))
+                    .cornerRadius(14)
+                    .transition(.scale.combined(with: .opacity))
+                    .accessibilityLabel("Golpe errado. O combo foi reiniciado.")
+            }
+
             if drillManager.isComboCompleted {
                 Text("EXCELENTE!")
                     .font(.system(size: 48, weight: .black))
@@ -100,20 +151,82 @@ struct DrillSessionView: View {
                 .padding()
                 .background(Color.vermelhoCard.opacity(0.6))
                 .cornerRadius(30)
-                .padding(.bottom, 60)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(
+                            drillManager.lastWasWrongPunch ? Color.red : Color.clear,
+                            lineWidth: 4
+                        )
+                )
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(accessibilityComboLabel(for: combo))
                 .accessibilityValue(accessibilityComboValue(for: combo))
             }
         }
         .padding(.bottom, 60)
+        .animation(.easeInOut(duration: 0.2), value: drillManager.lastWasWrongPunch)
     }
 
-    // MARK: - Ação
+    // MARK: - Fluxo de resultados
+
+    private func finishDrill() {
+        let results = drillManager.makeResults()
+        stopCamera()
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            drillResult = results
+        }
+    }
+
+    private func restartDrill() {
+        drillResult = nil
+        workoutViewModel.resetWorkout()
+        drillManager.stopDrill()
+        configureCamera()
+    }
 
     private func closeDrill() {
         drillManager.stopDrill()
+        stopCamera()
         dismiss()
+    }
+
+    // MARK: - Câmera
+
+    private func configureCamera() {
+        let model = workoutViewModel
+
+        cameraManager.frameDelegate = { [weak model] sampleBuffer in
+            model?.processFrame(sampleBuffer)
+        }
+
+        startCamera()
+    }
+
+    private func startCamera() {
+        let session = cameraManager.session
+
+        Self.cameraControlQueue.async {
+            guard !session.isRunning else { return }
+            session.startRunning()
+        }
+    }
+
+    private func stopCamera() {
+        cameraManager.frameDelegate = nil
+        let session = cameraManager.session
+
+        Self.cameraControlQueue.async {
+            guard session.isRunning else { return }
+            session.stopRunning()
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var formattedTime: String {
+        let seconds = max(Int(drillManager.timeRemaining.rounded(.up)), 0)
+        return String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 
     private func punchName(for punch: PunchType) -> String {
@@ -123,14 +236,14 @@ struct DrillSessionView: View {
         default: return ""
         }
     }
-    
+
     // MARK: - Accessibility Helpers
-    
+
     private func accessibilityComboLabel(for combo: DrillCombo) -> String {
         let sequenceText = combo.sequence.map { punchName(for: $0) }.joined(separator: ", ")
         return "Sequência de golpes: \(sequenceText)"
     }
-    
+
     private func accessibilityComboValue(for combo: DrillCombo) -> String {
         guard drillManager.currentStepIndex < combo.sequence.count else { return "Combo concluído" }
         let currentPunch = punchName(for: combo.sequence[drillManager.currentStepIndex])

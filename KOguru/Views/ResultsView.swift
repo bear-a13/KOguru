@@ -177,7 +177,7 @@ private var actions: some View {
     }
 }
 
-private struct ResultSummaryCard: View {
+struct ResultSummaryCard: View {
     let title: String
     let value: String
     let unit: String
