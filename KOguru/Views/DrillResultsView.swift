@@ -139,26 +139,6 @@ struct DrillResultsView: View {
                         blue: 196 / 255
                     )
                 )
-            }
-
-            HStack(spacing: 14) {
-                ResultSummaryCard(
-                    title: "TAXA DE ACERTO",
-                    value: accuracyPercentage,
-                    unit: "%",
-                    systemImage: "chart.bar.fill",
-                    accentColor: Color(
-                        red: 34 / 255,
-                        green: 139 / 255,
-                        blue: 86 / 255
-                    ),
-                    contentColor: Color(
-                        red: 205 / 255,
-                        green: 245 / 255,
-                        blue: 216 / 255
-                    )
-                )
-
                 ResultSummaryCard(
                     title: "TOTAL DE GOLPES",
                     value: "\(result.totalPunches)",
@@ -171,14 +151,45 @@ struct DrillResultsView: View {
                         blue: 255 / 255
                     )
                 )
+
             }
+
+//            HStack(spacing: 14) {
+//                ResultSummaryCard(
+//                    title: "TAXA DE ACERTO",
+//                    value: accuracyPercentage,
+//                    unit: "%",
+//                    systemImage: "chart.bar.fill",
+//                    accentColor: Color(
+//                        red: 34 / 255,
+//                        green: 139 / 255,
+//                        blue: 86 / 255
+//                    ),
+//                    contentColor: Color(
+//                        red: 205 / 255,
+//                        green: 245 / 255,
+//                        blue: 216 / 255
+//                    )
+//                )
+//
+//                ResultSummaryCard(
+//                    title: "TOTAL DE GOLPES",
+//                    value: "\(result.totalPunches)",
+//                    unit: "GOLPES",
+//                    systemImage: "target",
+//                    accentColor: topBackground,
+//                    contentColor: Color(
+//                        red: 205 / 255,
+//                        green: 220 / 255,
+//                        blue: 255 / 255
+//                    )
+//                )
+//            }
         }
         .frame(maxWidth: 228)
     }
 
-    private var accuracyPercentage: String {
-        String(format: "%.0f", result.accuracy * 100)
-    }
+    
 
     // MARK: - Ação
 

@@ -8,6 +8,10 @@ struct DrillSessionView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var drillResult: DrillResultsModel?
+    
+    // Estados da animação e tempo total
+    @State private var isTimePulsing = false
+    private let totalRoundTime: Double = 60.0 // Ajuste este valor para a duração real do seu round
 
     private static let cameraControlQueue = DispatchQueue(
         label: "br.com.koguru.drill-camera-control",
@@ -91,7 +95,47 @@ struct DrillSessionView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 50)
-
+                
+                if workoutViewModel.currentPhase == .counting {
+                    ZStack {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.black.opacity(0.3))
+                                                                Capsule()
+                                    .fill(Color.vermelhoCard)
+                                    .frame(width: max(0, geo.size.width * CGFloat(drillManager.timeRemaining / totalRoundTime)))
+                                    .animation(.linear, value: drillManager.timeRemaining)
+                                
+                                Text(formattedTime)
+                                    .font(Font.custom("Anton", size: 40))
+                                    .foregroundColor(.white)
+                                    .frame(width: geo.size.width, alignment: .center)
+                                    
+                            }
+                        }
+                        .frame(height: 55)
+                        .padding(.horizontal, 20)
+                        .scaleEffect(isTimePulsing ? 1.2 : 1.0)
+                        .onChange(of: drillManager.timeRemaining) { time in
+                            //aqui é para configurara o pulsar abaixo de 10s
+                            if time <= 10 && time > 0 {
+                                if !isTimePulsing {
+                                    withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                        isTimePulsing = true
+                                    }
+                                }
+                            } else if time <= 0 {
+                                // Para o pulso quando o tempo acaba
+                                withAnimation {
+                                    isTimePulsing = false
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: 55)
+                }
+                
                 Spacer()
 
                 if workoutViewModel.currentPhase == .counting {
@@ -105,35 +149,20 @@ struct DrillSessionView: View {
 
     private var drillOverlay: some View {
         VStack(alignment: .center, spacing: 14) {
-            Text(formattedTime)
-                .font(Font.custom("Anton", size: 34))
-                .foregroundColor(.white)
-                .monospacedDigit()
-                .padding(.horizontal, 18)
-                .padding(.vertical, 6)
-                .background(Color.black.opacity(0.45))
-                .cornerRadius(14)
-                .accessibilityLabel("Tempo restante: \(Int(drillManager.timeRemaining)) segundos")
-
             if drillManager.lastWasWrongPunch {
                 Text("ERROU! REINICIANDO COMBO")
                     .font(.system(size: 22, weight: .black))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(Color.red.opacity(0.85))
-                    .cornerRadius(14)
+                    .background(Color.backgroundColorRed)
                     .transition(.scale.combined(with: .opacity))
                     .accessibilityLabel("Golpe errado. O combo foi reiniciado.")
             }
 
             if drillManager.isComboCompleted {
                 Text("EXCELENTE!")
-                    .font(.system(size: 48, weight: .black))
+                    .font(.system(size: 36, weight: .black))
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color.vermelhoCard.opacity(0.6))
-                    .cornerRadius(30)
                     .accessibilityLabel("Excelente! Combo concluído.")
 
             } else if let combo = drillManager.currentCombo {
@@ -149,20 +178,14 @@ struct DrillSessionView: View {
                     }
                 }
                 .padding()
-                .background(Color.vermelhoCard.opacity(0.6))
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(
-                            drillManager.lastWasWrongPunch ? Color.red : Color.clear,
-                            lineWidth: 4
-                        )
-                )
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(accessibilityComboLabel(for: combo))
                 .accessibilityValue(accessibilityComboValue(for: combo))
             }
         }
+        .background(Color.backgroundColorRed.opacity(0.8))
+        .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 35, topTrailingRadius: 35))
+        .frame(width: 240)
         .padding(.bottom, 60)
         .animation(.easeInOut(duration: 0.2), value: drillManager.lastWasWrongPunch)
     }
