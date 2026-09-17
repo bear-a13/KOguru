@@ -12,7 +12,7 @@ struct KOguruApp: App {
     var body: some Scene {
         WindowGroup {
             AppEntryView {
-                HomeView()
+               HomeView()
             }
         }
     }
