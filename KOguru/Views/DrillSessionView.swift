@@ -5,30 +5,50 @@ struct DrillSessionView: View {
     @StateObject private var workoutViewModel = WorkoutViewModel()
     @StateObject private var drillManager = DrillManager()
     @Environment(\.dismiss) private var dismiss
-
+    
+    
+    @AppStorage("hasSeenJabTutorial") private var hasSeenTutorial = false
+    
     var body: some View {
+        ZStack{
+            if hasSeenTutorial{
+                mainDrillContent
+                    .transition(.opacity)
+            } else {
+                TutorialView{
+                    withAnimation(.easeInOut(duration: 0.3)){
+                        hasSeenTutorial = true
+                    }
+                }
+                .transition(.opacity)
+            }
+        }
+    }
+    
+    private var mainDrillContent: some View{
+        
         ZStack {
             CameraPreview(session: cameraManager.session)
                 .ignoresSafeArea()
                 .accessibilityHidden(true)
-
+            
             if workoutViewModel.currentPhase == .counting {
                 BodySkeletonView(joints: workoutViewModel.bodyJoints)
                     .accessibilityHidden(true)
             }
-
+            
             if workoutViewModel.currentPhase == .framing {
                 FramingOverlayView(isFramed: workoutViewModel.isProperlyFramed)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(workoutViewModel.isProperlyFramed ? "Corpo enquadrado corretamente" : "Ajuste sua posição em frente à câmera")
             }
-
+            
             VStack {
                 HStack {
                     CircleIconButton(systemName: "xmark") { closeDrill() }
                         .accessibilityLabel("Encerrar drill")
                         .accessibilityHint("Toque duas vezes para parar o treino e sair")
-
+                    
                     Spacer()
                     
                     Text("DRILL")
@@ -43,9 +63,9 @@ struct DrillSessionView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 50)
-
+                
                 Spacer()
-
+                
                 if workoutViewModel.currentPhase == .counting {
                     drillOverlay
                 }
@@ -54,7 +74,7 @@ struct DrillSessionView: View {
         .navigationBarHidden(true)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
-
+            
             cameraManager.frameDelegate = { sampleBuffer in
                 workoutViewModel.processFrame(sampleBuffer)
             }
@@ -71,9 +91,9 @@ struct DrillSessionView: View {
             drillManager.processPunch(newPunch)
         }
     }
-
+    
     // MARK: - Overlay
-
+    
     private var drillOverlay: some View {
         VStack(alignment: .center, spacing: 4) {
             if drillManager.isComboCompleted {
@@ -84,12 +104,12 @@ struct DrillSessionView: View {
                     .background(Color.vermelhoCard.opacity(0.6))
                     .cornerRadius(30)
                     .accessibilityLabel("Excelente! Combo concluído.")
-
+                
             } else if let combo = drillManager.currentCombo {
                 VStack(alignment: .center) {
                     ForEach(Array(combo.sequence.enumerated()), id: \.offset) { index, punch in
                         let isCompleted = index < drillManager.currentStepIndex
-
+                        
                         Text(punchName(for: punch))
                             .font(.system(size: 36, weight: .black))
                             .foregroundColor(.white)
@@ -108,14 +128,14 @@ struct DrillSessionView: View {
         }
         .padding(.bottom, 60)
     }
-
+    
     // MARK: - Ação
-
+    
     private func closeDrill() {
         drillManager.stopDrill()
         dismiss()
     }
-
+    
     private func punchName(for punch: PunchType) -> String {
         switch punch {
         case .jab: return "JAB"
