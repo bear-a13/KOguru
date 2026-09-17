@@ -14,18 +14,28 @@ struct TutorialView: View {
             
             VStack(spacing: 0) {
                 // MARK: - CABEÇALHO CUSTOMIZADO
-                HStack {
-                    Spacer()
-                    
+                ZStack {
                     Text("INSTRUÇÕES")
                         .font(.custom("Anton", size: 30))
                         .foregroundColor(.white)
                         .bold()
                         .accessibilityAddTraits(.isHeader)
                     
-                    Spacer()
+                    HStack {
+                        if onStart != nil {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 22, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(8)                             }
+                            .accessibilityLabel("Sair e voltar para a tela inicial")
+                        }
+                        Spacer()
+                    }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 8)
                 .padding(.bottom, 16)
                 
                 // MARK: - CONTEÚDO
