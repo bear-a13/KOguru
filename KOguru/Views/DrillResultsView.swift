@@ -11,6 +11,8 @@ struct DrillResultsView: View {
     let onDone: () -> Void
     let onRestart: () -> Void
 
+    @State private var visibleTier: Int = 0
+
     init(
         result: DrillResultsModel,
         onRestart: @escaping () -> Void = {},
@@ -22,10 +24,16 @@ struct DrillResultsView: View {
     }
 
     private let topBackground = Color(red: 23 / 255, green: 32 / 255, blue: 51 / 255)
-
     private let bottomBackground = Color(red: 47 / 255, green: 62 / 255, blue: 102 / 255)
-
     private let buttonColor = Color(red: 181 / 255, green: 46 / 255, blue: 47 / 255)
+
+    // aqui coloca como vai querer os niveis para consegui as estrelas 
+    private var targetTier: Int {
+        if result.combosCompleted >= 15 { return 3 }
+        else if result.combosCompleted >= 10 { return 2 }
+        else if result.combosCompleted >= 5 { return 1 }
+        else { return 0 }
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -41,6 +49,7 @@ struct DrillResultsView: View {
                         width: geometry.size.width,
                         height: imageHeight
                     )
+                    .padding(.top, -4)
 
                     VStack(spacing: 0) {
                         titleSection
@@ -61,25 +70,64 @@ struct DrillResultsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .ignoresSafeArea(edges: .top)
+            .onAppear {
+                triggerBeltAnimation()
+            }
         }
     }
 
-    // MARK: - Imagem fixa dos Assets
+    // MARK: - Imagens com Crossfade
 
     private func imageSection(width: CGFloat, height: CGFloat) -> some View {
         ZStack {
             topBackground
-
-            Image("ringue")
+            
+            // Base: Cinturão apagado sempre no fundo
+            Image("cinturao-sem-estrela")
                 .resizable()
                 .scaledToFill()
-                .frame(width: width, height: height)
-                .clipped()
+            
+            // Camada 1 Estrela (Aparece se tier >= 1)
+            if visibleTier >= 1 {
+                Image("cinturao-uma-estrela")
+                    .resizable()
+                    .scaledToFill()
+                    .transition(.opacity)
+            }
+            
+            // Camada 2 Estrelas (Aparece se tier >= 2)
+            if visibleTier >= 2 {
+                Image("cinturao-duas-estrelas")
+                    .resizable()
+                    .scaledToFill()
+                    .transition(.opacity)
+            }
+            
+            // Camada 3 Estrelas (Aparece se tier >= 3)
+            if visibleTier >= 3 {
+                Image("cinturao-tres-estrelas")
+                    .resizable()
+                    .scaledToFill()
+                    .transition(.opacity)
+            }
         }
-        .frame(width: width, height: height)
-        .clipped()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+    
+    
+    private func triggerBeltAnimation() {
+        guard targetTier > 0 else { return } // Se for zero estrelas, não precisa animar
+        
+        // Loop para animar as estrelas progressivamente como um "Level Up"
+        for tier in 1...targetTier {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + (Double(tier) * 0.7)) {
+                withAnimation(.easeIn(duration: 0.5)) {
+                    visibleTier = tier
+                }
+            }
+        }
     }
 
     // MARK: - Textos
@@ -93,7 +141,7 @@ struct DrillResultsView: View {
                 .minimumScaleFactor(0.75)
                 .lineLimit(1)
 
-            Text("Boa! Você segurou o ritmo até o fim.")
+            Text("Seus treinos estão dando resultado, hein?")
                 .font(.system(size: 17, weight: .regular))
                 .foregroundStyle(.white.opacity(0.92))
                 .multilineTextAlignment(.center)
@@ -106,11 +154,12 @@ struct DrillResultsView: View {
     private var metrics: some View {
         VStack(spacing: 14) {
             HStack(spacing: 14) {
+               
                 ResultSummaryCard(
-                    title: "COMBOS",
-                    value: "\(result.combosCompleted)",
-                    unit: "COMPLETOS",
-                    systemImage: "checkmark.seal.fill",
+                    title: "ACERTOS",
+                    value: "\(result.correctPunches)",
+                    unit: "GOLPES",
+                    systemImage: "target",
                     accentColor: Color(
                         red: 169 / 255,
                         green: 48 / 255,
@@ -124,9 +173,22 @@ struct DrillResultsView: View {
                 )
 
                 ResultSummaryCard(
-                    title: "GOLPES ERRADOS",
+                    title: "COMBOS",
+                    value: "\(result.combosCompleted)",
+                    unit: "COMPLETOS",
+                    systemImage: "star.fill",
+                    accentColor: Color.azulResultadosFora,
+                    contentColor: Color(
+                        red: 205 / 255,
+                        green: 220 / 255,
+                        blue: 255 / 255
+                    )
+                )
+                
+                ResultSummaryCard(
+                    title: "ERRADOS",
                     value: "\(result.wrongPunches)",
-                    unit: "ERROS",
+                    unit: "GOLPES",
                     systemImage: "xmark",
                     accentColor: Color(
                         red: 221 / 255,
@@ -139,59 +201,12 @@ struct DrillResultsView: View {
                         blue: 196 / 255
                     )
                 )
-                ResultSummaryCard(
-                    title: "TOTAL DE GOLPES",
-                    value: "\(result.totalPunches)",
-                    unit: "GOLPES",
-                    systemImage: "target",
-                    accentColor: topBackground,
-                    contentColor: Color(
-                        red: 205 / 255,
-                        green: 220 / 255,
-                        blue: 255 / 255
-                    )
-                )
-
             }
-
-//            HStack(spacing: 14) {
-//                ResultSummaryCard(
-//                    title: "TAXA DE ACERTO",
-//                    value: accuracyPercentage,
-//                    unit: "%",
-//                    systemImage: "chart.bar.fill",
-//                    accentColor: Color(
-//                        red: 34 / 255,
-//                        green: 139 / 255,
-//                        blue: 86 / 255
-//                    ),
-//                    contentColor: Color(
-//                        red: 205 / 255,
-//                        green: 245 / 255,
-//                        blue: 216 / 255
-//                    )
-//                )
-//
-//                ResultSummaryCard(
-//                    title: "TOTAL DE GOLPES",
-//                    value: "\(result.totalPunches)",
-//                    unit: "GOLPES",
-//                    systemImage: "target",
-//                    accentColor: topBackground,
-//                    contentColor: Color(
-//                        red: 205 / 255,
-//                        green: 220 / 255,
-//                        blue: 255 / 255
-//                    )
-//                )
-//            }
         }
-        .frame(maxWidth: 228)
+        .frame(maxWidth: .infinity)
     }
 
-    
-
-    // MARK: - Ação
+    // MARK: - Ações
 
     private var actions: some View {
         VStack(spacing: 12) {
@@ -219,8 +234,8 @@ struct DrillResultsView: View {
         result: DrillResultsModel(
             startedAt: Date().addingTimeInterval(-60),
             endedAt: Date(),
-            combosCompleted: 7,
-            correctPunches: 21,
+            combosCompleted: 3, // Forçando acima de 20 para testar a animação completa das 3 estrelas
+            correctPunches: 60,
             wrongPunches: 4
         )
     )

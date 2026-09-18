@@ -199,7 +199,7 @@ struct ResultSummaryCard: View {
                 Image(systemName: systemImage)
                     .font(.system(size: 23, weight: .bold))
 
-                VStack(alignment: .leading, spacing: -3) {
+                VStack(alignment: .leading, spacing: -10) {
                     Text(value)
 
                         .font(Font.custom("Anton", size: 31))
