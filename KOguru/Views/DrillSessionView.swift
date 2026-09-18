@@ -151,8 +151,9 @@ struct DrillSessionView: View {
         VStack(alignment: .center, spacing: 14) {
             if drillManager.lastWasWrongPunch {
                 Text("ERROU! REINICIANDO COMBO")
-                    .font(.system(size: 22, weight: .black))
+                    .font(.system(size: 26, weight: .black))
                     .foregroundColor(.white)
+                    .padding()
                     .background(Color.backgroundColorRed)
                     .transition(.scale.combined(with: .opacity))
                     .accessibilityLabel("Golpe errado. O combo foi reiniciado.")
@@ -185,7 +186,7 @@ struct DrillSessionView: View {
         }
         .background(Color.backgroundColorRed.opacity(0.8))
         .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 35, topTrailingRadius: 35))
-        .frame(width: 240)
+        .frame(width: 300)
         .padding(.bottom, 60)
         .animation(.easeInOut(duration: 0.2), value: drillManager.lastWasWrongPunch)
     }
