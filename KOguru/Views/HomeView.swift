@@ -8,46 +8,97 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var isShowingWorkoutSession = false
+    @State private var isShowingDrillSession = false
+    
     var body: some View {
-        VStack{
-            HStack{
-                VStack(alignment: .leading){
-                    Text("LOREN IPSUM")
-                        .font(.largeTitle)
-                        .bold()
-                    Text("consectetur adipiscing elit, sed do eiusmod tempor ")
+        ZStack {
+            VStack {
+                Color(Color.backgroundColorBlue)
+                    .ignoresSafeArea()
+                Color(Color.backgroundColorRed)
+                    .frame(maxWidth: .infinity)
+            }
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    HStack {
+                        Text("E AI, TÁ PRONTO?")
+                            .padding(.horizontal, 16)
+                            .font(.custom("Anton", size: 40, relativeTo: .largeTitle))
+                            .bold()
+                            .foregroundStyle(.white)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h1)
+                        Spacer()
+                    }
+                    .accessibilityElement(children: .combine)
                     
+                    InformationHomeCard()
+                        .padding(.horizontal, 16)
+                        .padding(.top, -26)
+                        .padding(.bottom, 40)
                     
-                }
-                VStack{
-                    Rectangle()
-                        .foregroundColor(.black)
-                      .frame(width: 177, height: 148)
-                      .cornerRadius(15)
+                    VStack(spacing: 16) {
+                        Text("VAMOS TREINAR!")
+                            .font(.custom("Anton", size: 28, relativeTo: .title))
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.white)
+                            .padding(2)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h2)
+                        
+                        Button(action: {
+                            isShowingWorkoutSession = true
+                        }) {
+                            TrainCard(
+                                color: .vermelhoCard,
+                                titulo: "JAB E DIRETO",
+                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto.",
+                                ImagemBack: "explozaoVermelho"
+                            )
+                            .accessibilityHidden(true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Treino Jab e Direto. Aprenda a executar os movimentos do boxe.")
+                        .accessibilityHint("Toque duas vezes para iniciar este treino")
+                        .accessibilityAddTraits(.isButton)
+                        
+                        // Botão 2: Drills
+                        Button(action: {
+                            isShowingDrillSession = true
+                        }) {
+                            TrainCard(
+                                color: .azulCard,
+                                titulo: "DRILLS",
+                                subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
+                                ImagemBack: "explozaoAzul"
+                            )
+                            .accessibilityHidden(true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
+                        .accessibilityHint("Toque duas vezes para iniciar esta sessão")
+                        .accessibilityAddTraits(.isButton)
+                    }
+                    .padding(.bottom, 100)
+                    .padding()
+                    .background(Color.backgroundColorRed)
+                    .cornerRadius(30)
                 }
             }
-            .padding()
         }
-        
-        
-        VStack(spacing: 16) {
-            Text("LOREM IPSUM DOLOR SIT AMET?")
-                .font(.title2)
-                .bold()
-                .foregroundColor(.black)
-                .padding(.vertical, 28)
-            Card()
-            Card()
-            Card()
-            
-            
+        .fullScreenCover(isPresented: $isShowingWorkoutSession) {
+            WorkoutSessionView()
         }
-        .frame(width: 402, height: .infinity)
-        .background(Color(red: 0.82, green: 0.82, blue: 0.82).opacity(0.3))
-        .cornerRadius(30)
-        
+        .fullScreenCover(isPresented: $isShowingDrillSession) {
+            DrillSessionView()
+        }
     }
-    
 }
 
 #Preview {

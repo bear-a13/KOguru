@@ -1,0 +1,22 @@
+[
+  {
+    "image": "passo1",
+    "title": "PRIMEIRO PASSO",
+    "description": "Estenda o braço da frente rapidamente (jab), girando levemente o punho no final do movimento. Mantenha a outra mão protegendo o rosto."
+  },
+  {
+    "image": "passo2",
+    "title": "SEGUNDO PASSO",
+    "description": "Inicie o movimento do direto girando o calcanhar da perna de trás para fora. Acompanhe com a rotação do quadril e do tronco para gerar potência."
+  },
+  {
+    "image": "passo3",
+    "title": "TERCEIRO PASSO",
+    "description": "Estenda o braço de trás em linha reta, mantendo o ombro alto para proteger o queixo. O punho deve girar no momento final do impacto."
+  },
+  {
+    "image": "passo4",
+    "title": "QUARTO PASSO",
+    "description": "Recolha o braço imediatamente pelo mesmo caminho que ele foi lançado. Retorne para a guarda inicial com a base firme e o abdômen contraído."
+  }
+]

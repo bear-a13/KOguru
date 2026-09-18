@@ -1,0 +1,253 @@
+import SwiftUI
+import AVFoundation
+
+struct WorkoutSessionView: View {
+    @AppStorage("hasSeenJabTutorial") private var hasSeenTutorial = false
+    
+    @StateObject private var cameraManager = CameraManager()
+    @StateObject private var viewModel = WorkoutViewModel()
+    @StateObject private var resultsStore = ResultsStore()
+    
+    @Environment(\.dismiss) private var dismiss
+    @State private var showTutorialSheet = false
+
+    @State private var result: ResultsModel?
+    @State private var isShowingTutorial = false
+
+    private static let cameraControlQueue = DispatchQueue(
+        label: "br.com.koguru.camera-control",
+        qos: .userInitiated
+    )
+    
+    var body: some View {
+            ZStack {
+                if hasSeenTutorial {
+                    mainWorkoutContent
+                        .transition(.opacity)
+                } else {
+                    TutorialView {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            hasSeenTutorial = true
+                        }
+                    }
+                    .transition(.opacity)
+                }
+            }
+            .navigationBarHidden(true)
+        }
+
+    private var mainWorkoutContent: some View {
+        Group {
+            if let result {
+                ResultsView(
+                    result: result,
+                    onRestart: restartWorkout,
+                    onDone: closeWorkout
+                )
+                .transition(.opacity)
+            } else {
+                cameraContent
+            }
+        }
+        .navigationBarHidden(true)
+        .onAppear {
+            // Mantém a tela ligada durante o treino.
+            UIApplication.shared.isIdleTimerDisabled = true
+            configureCamera()
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            stopCamera()
+        }
+        .fullScreenCover(isPresented: $showTutorialSheet) {
+            NavigationStack {
+                TutorialView()
+            }
+        }
+        
+        .alert("Como a velocidade funciona?", isPresented: $isShowingTutorial) {
+            Button("Entendi", role: .cancel) {}
+        } message: {
+            Text(
+                "A câmera usa pose 2D, então a velocidade é relativa ao seu corpo e é informada em m/s."
+            )
+        }
+    }
+
+    // MARK: - Interface da câmera
+
+    private var cameraContent: some View {
+        ZStack {
+            // FRAME DA CÂMERA
+            CameraPreview(session: cameraManager.session)
+                .ignoresSafeArea()
+
+            if viewModel.currentPhase == .framing {
+                FramingOverlayView(
+                    isFramed: viewModel.isProperlyFramed
+                )
+            }
+
+            if viewModel.currentPhase == .counting {
+                BodySkeletonView(joints: viewModel.bodyJoints)
+            }
+
+            VStack {
+                // CABEÇALHO
+                HStack {
+                    CircleIconButton(systemName: "xmark", action: closeWorkout)
+
+                    Spacer()
+
+                    Text("JAB E DIRETO")
+                        .font(Font.custom("Anton", size: 36))
+                        .foregroundColor(.white)
+
+                    Spacer()
+
+CircleIconButton(systemName: "book.pages") { showTutorialSheet = true }
+                        .accessibilityLabel("Instruções botão")
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 50)
+
+                Spacer()
+
+                // CONTROLE DAS TELAS
+                switch viewModel.currentPhase {
+                case .framing:
+                    EmptyView()
+
+                case .counting:
+                    CountingOverlayView(
+                        count: viewModel.punchCount,
+                        lastPunch: viewModel.lastDetectedPunch
+                    )
+
+                case .finished:
+                    // O resultado é exibido pelo Group principal.
+                    EmptyView()
+                }
+
+                Spacer()
+
+                if viewModel.currentPhase == .counting {
+                    PrimaryActionButton(
+                        title: "RESULTADOS",
+                        systemImage: "trophy.fill",
+                        accessibilityHint: "Sai da tela de contagem e vai para a tela de resultados",
+                        action: finishWorkout
+                    )
+                    .padding(.horizontal, 30)
+                    .padding(.bottom, 30)
+                }
+            }
+        }
+    }
+
+    // MARK: - Câmera
+
+    private func configureCamera() {
+        let model = viewModel
+
+        cameraManager.frameDelegate = { [weak model] sampleBuffer in
+            model?.processFrame(sampleBuffer)
+        }
+
+        startCamera()
+    }
+
+    private func startCamera() {
+            let session = cameraManager.session
+
+            Self.cameraControlQueue.async {
+                guard !session.isRunning else { return }
+                session.startRunning()
+            }
+        }
+
+    private func stopCamera() {
+        cameraManager.frameDelegate = nil
+        let session = cameraManager.session
+
+        Self.cameraControlQueue.async {
+            guard session.isRunning else { return }
+            session.stopRunning()
+        }
+    }
+
+    // MARK: - Fluxo de resultados
+
+    private func finishWorkout() {
+        let generatedResult = viewModel.finishWorkout()
+        resultsStore.add(generatedResult)
+        stopCamera()
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            result = generatedResult
+        }
+    }
+
+    private func restartWorkout() {
+        viewModel.resetWorkout()
+        result = nil
+        configureCamera()
+    }
+
+    private func closeWorkout() {
+        UIApplication.shared.isIdleTimerDisabled = false
+        stopCamera()
+        dismiss()
+    }
+}
+
+// MARK: - Overlay de enquadramento
+
+struct FramingOverlayView: View {
+    var isFramed: Bool
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Image("frame")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .ignoresSafeArea()
+                .accessibilityLabel("possicione o seu corpo todo na camera no angulo de 45 graus")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
+    }
+}
+
+// MARK: - Contador
+
+struct CountingOverlayView: View {
+    var count: Int
+    var lastPunch: PunchType
+
+    var body: some View {
+        ZStack {
+            VStack {
+                Text(String(format: "%02d", count))
+                    .font(Font.custom("Sedgwick Ave Display", size: 110))
+                    .foregroundColor(.white)
+                    .shadow(radius: 40)
+                
+
+                if lastPunch != .none {
+                    Text(lastPunch.rawValue)
+                        .font(.system(size: 26, weight: .black))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(10)
+                }
+
+                Spacer()
+            }
+        }
+    }
+}
