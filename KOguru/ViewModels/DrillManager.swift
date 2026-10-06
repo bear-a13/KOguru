@@ -14,6 +14,7 @@ class DrillManager: ObservableObject {
     @Published var lastWasWrongPunch = false
     @Published var timeRemaining: TimeInterval = DrillManager.roundDuration
     @Published var isRoundOver = false
+    @Published var isMuted = false
 
     private(set) var combosCompleted = 0
     private(set) var correctPunches = 0
@@ -60,6 +61,7 @@ class DrillManager: ObservableObject {
         lastWasWrongPunch = false
         timeRemaining = Self.roundDuration
         drillStartedAt = Date()
+        isMuted = false
 
         startRoundTimer()
         nextCommand()
@@ -73,6 +75,13 @@ class DrillManager: ObservableObject {
         roundTimer = nil
         synthesizer.stopSpeaking(at: .immediate)
         currentCombo = nil
+    }
+
+    func toggleMute() {
+        isMuted.toggle()
+        if isMuted {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
     }
 
     func makeResults() -> DrillResultsModel {
@@ -163,6 +172,8 @@ class DrillManager: ObservableObject {
         utterance.voice = AVSpeechSynthesisVoice(language: "pt-BR")
         utterance.rate = 0.5
 
-        synthesizer.speak(utterance)
+        if !isMuted {
+            synthesizer.speak(utterance)
+        }
     }
 }
