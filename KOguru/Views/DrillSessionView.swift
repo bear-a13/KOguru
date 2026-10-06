@@ -8,7 +8,8 @@ struct DrillSessionView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var drillResult: DrillResultsModel?
-    
+    @State private var showInstructions = false
+
     // Estados da animação e tempo total
     @State private var isTimePulsing = false
     private let totalRoundTime: Double = 60.0 // Ajuste este valor para a duração real do seu round
@@ -54,6 +55,9 @@ struct DrillSessionView: View {
                 finishDrill()
             }
         }
+        .sheet(isPresented: $showInstructions) {
+            TutorialView()
+        }
     }
 
     // MARK: - Interface da câmera
@@ -90,8 +94,15 @@ struct DrillSessionView: View {
 
                     Spacer()
 
-                    Color.clear.frame(width: 40, height: 40)
-                        .accessibilityHidden(true)
+                    HStack(spacing: 10) {
+                        CircleIconButton(
+                            systemName: drillManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill"
+                        ) { drillManager.toggleMute() }
+                            .accessibilityLabel(drillManager.isMuted ? "Ativar som" : "Silenciar som")
+
+                        CircleIconButton(systemName: "doc.text") { showInstructions = true }
+                            .accessibilityLabel("Instruções")
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 50)
