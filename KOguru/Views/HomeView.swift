@@ -11,6 +11,7 @@ struct HomeView: View {
     @State private var isShowingWorkoutSession = false
     @State private var isShowingDrillSession = false
     @State private var isShowingHistory = false
+    @State private var isShowingWarmUp = false
     
     var body: some View {
         ZStack {
@@ -91,6 +92,19 @@ struct HomeView: View {
                         .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
                         .accessibilityAddTraits(.isButton)
+
+                        // Botão 3: Aquecimento
+                        Button(action: {
+                            isShowingWarmUp = true
+                        }) {
+                            WarmUpCard()
+                                .accessibilityHidden(true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Aquecimento. Previna lesões antes do round")
+                        .accessibilityHint("Toque duas vezes para iniciar o aquecimento")
+                        .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)
                     .padding()
@@ -107,6 +121,9 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $isShowingHistory) {
             HistoryView()
+        }
+        .fullScreenCover(isPresented: $isShowingWarmUp) {
+            WarmUpView()
         }
     }
 }
