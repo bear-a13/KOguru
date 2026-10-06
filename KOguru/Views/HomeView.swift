@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var isShowingWorkoutSession = false
     @State private var isShowingDrillSession = false
+    @State private var isShowingHistory = false
     
     var body: some View {
         ZStack {
@@ -84,6 +85,24 @@ struct HomeView: View {
                         .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
                         .accessibilityAddTraits(.isButton)
+
+                        // Botão 3: Histórico
+                        Button(action: {
+                            isShowingHistory = true
+                        }) {
+                            TrainCard(
+                                color: .amareloCard,
+                                titulo: "HISTÓRICO",
+                                subTitulo: "Acompanhe seus treinos, recordes e evolução de golpes.",
+                                ImagemBack: "explozaoAmarelo"
+                            )
+                            .accessibilityHidden(true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Histórico de treinos. Acompanhe seus treinos e evolução.")
+                        .accessibilityHint("Toque duas vezes para ver seu histórico")
+                        .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)
                     .padding()
@@ -97,6 +116,9 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $isShowingDrillSession) {
             DrillSessionView()
+        }
+        .fullScreenCover(isPresented: $isShowingHistory) {
+            HistoryView()
         }
     }
 }
