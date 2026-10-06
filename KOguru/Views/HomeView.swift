@@ -34,8 +34,14 @@ struct HomeView: View {
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h1)
                         Spacer()
+
+                        CircleIconButton(systemName: "chart.bar.fill") {
+                            isShowingHistory = true
+                        }
+                        .accessibilityLabel("Histórico de treinos")
+                        .accessibilityHint("Toque duas vezes para ver seu histórico")
+                        .padding(.trailing, 16)
                     }
-                    .accessibilityElement(children: .combine)
                     
                     InformationHomeCard()
                         .padding(.horizontal, 16)
@@ -84,24 +90,6 @@ struct HomeView: View {
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
-                        .accessibilityAddTraits(.isButton)
-
-                        // Botão 3: Histórico
-                        Button(action: {
-                            isShowingHistory = true
-                        }) {
-                            TrainCard(
-                                color: .amareloCard,
-                                titulo: "HISTÓRICO",
-                                subTitulo: "Acompanhe seus treinos, recordes e evolução de golpes.",
-                                ImagemBack: "explozaoAmarelo"
-                            )
-                            .accessibilityHidden(true)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Histórico de treinos. Acompanhe seus treinos e evolução.")
-                        .accessibilityHint("Toque duas vezes para ver seu histórico")
                         .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)

@@ -20,9 +20,7 @@ struct HistoryView: View {
             VStack(spacing: 0) {
                 Color.backgroundColorBlue
                     .ignoresSafeArea()
-                Color.backgroundColorRed
-                    .frame(maxWidth: .infinity)
-                    .ignoresSafeArea()
+               
             }
             .accessibilityHidden(true)
 
