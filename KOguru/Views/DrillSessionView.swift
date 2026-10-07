@@ -5,6 +5,7 @@ struct DrillSessionView: View {
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var workoutViewModel = WorkoutViewModel()
     @StateObject private var drillManager = DrillManager()
+    @StateObject private var resultsStore = DrillResultsStore()
     @Environment(\.dismiss) private var dismiss
 
     @State private var drillResult: DrillResultsModel?
@@ -206,6 +207,7 @@ struct DrillSessionView: View {
 
     private func finishDrill() {
         let results = drillManager.makeResults()
+        resultsStore.add(results)
         stopCamera()
 
         withAnimation(.easeInOut(duration: 0.25)) {

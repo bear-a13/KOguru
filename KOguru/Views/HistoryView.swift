@@ -11,25 +11,23 @@ import Charts
 struct HistoryView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var resultsStore = ResultsStore()
+    @StateObject private var drillResultsStore = DrillResultsStore()
+
+    @State private var hasAppeared = false
 
     private let topBackground = Color(red: 23 / 255, green: 32 / 255, blue: 51 / 255)
     private let bottomBackground = Color(red: 47 / 255, green: 62 / 255, blue: 102 / 255)
 
     var body: some View {
         ZStack {
-            VStack(spacing: 0) {
-                Color.backgroundColorBlue
-                    .ignoresSafeArea()
-                Color.backgroundColorRed
-                    .frame(maxWidth: .infinity)
-                    .ignoresSafeArea()
-            }
-            .accessibilityHidden(true)
+            Color.backgroundColorBlue
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 header
 
-                if resultsStore.sessions.isEmpty {
+                if resultsStore.sessions.isEmpty && drillResultsStore.sessions.isEmpty {
                     emptyState
                 } else {
                     ScrollView(.vertical, showsIndicators: false) {
@@ -46,6 +44,14 @@ struct HistoryView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            DispatchQueue.main.async {
+                withAnimation(.easeOut(duration: 0.6)) {
+                    hasAppeared = true
+                }
+            }
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: hasAppeared)
     }
 
     // MARK: - Cabeçalho
@@ -91,7 +97,7 @@ struct HistoryView: View {
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
 
-            Text("Complete um treino de Jab e Direto para começar a acompanhar seu progresso aqui.")
+            Text("Complete um treino de Jab e Direto ou um Drill para começar a acompanhar seu progresso aqui.")
                 .font(.system(size: 16, weight: .regular))
                 .foregroundStyle(.white.opacity(0.85))
                 .multilineTextAlignment(.center)
@@ -134,11 +140,11 @@ struct HistoryView: View {
                 accentColor: Color.azulCard,
                 contentColor: Color(red: 205 / 255, green: 220 / 255, blue: 255 / 255)
             )
-            HistoryStatCard(
-                title: "RECORDE",
-                value: formatSpeed(recordSpeed),
-                unit: "m/s",
-                systemImage: "bolt.fill",
+HistoryStatCard(
+                title: "COMBOS",
+                value: "\(totalCombos)",
+                unit: totalCombos == 1 ? "COMBO" : "COMBOS",
+                systemImage: "star.fill",
                 accentColor: Color.azulResultadosFora,
                 contentColor: Color(red: 205 / 255, green: 220 / 255, blue: 255 / 255)
             )
@@ -153,14 +159,21 @@ struct HistoryView: View {
                 .font(Font.custom("Anton", size: 20))
                 .foregroundStyle(Color.white)
 
-            Chart(last7Days) { entry in
+            Chart(hasAppeared ? chartSegments : []) { segment in
                 BarMark(
-                    x: .value("Dia", entry.day, unit: .day),
-                    y: .value("Golpes", entry.punches)
+                    x: .value("Dia", segment.day, unit: .day),
+                    y: .value("Quantidade", segment.value)
                 )
-                .foregroundStyle(Color.amareloCard)
-                .cornerRadius(4)
+                .foregroundStyle(by: .value("Atividade", segment.kind.label))
+                .position(by: .value("Atividade", segment.kind.label))
+                .cornerRadius(segment.kind == .combos ? 5 : 3)
+                .opacity(segment.kind == .combos ? 0.95 : 1)
             }
+            .chartForegroundStyleScale([
+                ActivityKind.punches.label: Color.amareloCard,
+                ActivityKind.combos.label: Color.vermelhoCard
+            ])
+            .chartLegend(position: .bottom, alignment: .center, spacing: 12)
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { _ in
                     AxisGridLine()
@@ -186,20 +199,22 @@ struct HistoryView: View {
                 .font(Font.custom("Anton", size: 20))
                 .foregroundStyle(Color.white)
 
-            ForEach(resultsStore.sessions) { session in
+            ForEach(recentSessions) { session in
                 historyRow(session)
             }
         }
     }
 
-    private func historyRow(_ session: ResultsModel) -> some View {
+    private func historyRow(_ session: SessionEntry) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(formatDay(session.startedAt))
+                Text(session.name)
                     .font(Font.custom("Anton", size: 20))
                     .foregroundStyle(Color.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
 
-                Text(formatHour(session.startedAt))
+                Text("\(formatDay(session.date)) • \(formatHour(session.date))")
                     .font(.system(size: 13, weight: .regular))
                     .foregroundStyle(Color.white.opacity(0.7))
             }
@@ -207,11 +222,11 @@ struct HistoryView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text("\(session.totalPunches) GOLPES")
+                Text(session.primary)
                     .font(Font.custom("Anton", size: 18))
                     .foregroundStyle(Color.amareloCard)
 
-                Text("Vel. máx: \(formatSpeed(session.maximumSpeed)) m/s")
+                Text(session.secondary)
                     .font(.system(size: 13, weight: .regular))
                     .foregroundStyle(Color.white.opacity(0.7))
             }
@@ -226,19 +241,56 @@ struct HistoryView: View {
     // MARK: - Agregações
 
     private var totalSessions: Int {
-        resultsStore.sessions.count
+        resultsStore.sessions.count + drillResultsStore.sessions.count
     }
 
     private var totalPunches: Int {
         resultsStore.sessions.reduce(0) { $0 + $1.totalPunches }
+            + drillResultsStore.sessions.reduce(0) { $0 + $1.totalPunches }
     }
 
     private var totalDuration: TimeInterval {
         resultsStore.sessions.reduce(0) { $0 + $1.duration }
+            + drillResultsStore.sessions.reduce(0) { $0 + $1.duration }
     }
 
-    private var recordSpeed: Double {
-        resultsStore.sessions.map(\.maximumSpeed).max() ?? 0
+    private var totalCombos: Int {
+        drillResultsStore.sessions.reduce(0) { $0 + $1.combosCompleted }
+    }
+
+    // MARK: - Sessões recentes
+
+    private struct SessionEntry: Identifiable {
+        let id: UUID
+        let name: String
+        let date: Date
+        let primary: String
+        let secondary: String
+    }
+
+    private var recentSessions: [SessionEntry] {
+        let workoutEntries = resultsStore.sessions.map { session in
+            SessionEntry(
+                id: session.id,
+                name: "JAB E DIRETO",
+                date: session.startedAt,
+                primary: "\(session.totalPunches) GOLPES",
+                secondary: "Vel. máx: \(formatSpeed(session.maximumSpeed)) m/s"
+            )
+        }
+
+        let drillEntries = drillResultsStore.sessions.map { session in
+            SessionEntry(
+                id: session.id,
+                name: "DRILL",
+                date: session.startedAt,
+                primary: "\(session.combosCompleted) COMBOS",
+                secondary: "Precisão: \(Int(session.accuracy * 100))%"
+            )
+        }
+
+        return (workoutEntries + drillEntries)
+            .sorted { $0.date > $1.date }
     }
 
     private struct DayPunches: Identifiable {
@@ -248,7 +300,26 @@ struct HistoryView: View {
         var id: Date { day }
     }
 
-    private var last7Days: [DayPunches] {
+    private enum ActivityKind {
+        case punches
+        case combos
+
+        var label: String {
+            switch self {
+            case .punches: return "Golpes"
+            case .combos: return "Combos"
+            }
+        }
+    }
+
+    private struct DaySegment: Identifiable {
+        let id: UUID
+        let day: Date
+        let value: Int
+        let kind: ActivityKind
+    }
+
+    private var chartSegments: [DaySegment] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
@@ -256,11 +327,26 @@ struct HistoryView: View {
             calendar.date(byAdding: .day, value: -offset, to: today)
         }.reversed()
 
-        return days.map { day in
+        return days.flatMap { day -> [DaySegment] in
             let punches = resultsStore.sessions
                 .filter { calendar.isDate($0.startedAt, inSameDayAs: day) }
                 .reduce(0) { $0 + $1.totalPunches }
-            return DayPunches(day: day, punches: punches)
+            let combos = drillResultsStore.sessions
+                .filter { calendar.isDate($0.startedAt, inSameDayAs: day) }
+                .reduce(0) { $0 + $1.combosCompleted }
+
+            var segments: [DaySegment] = []
+            if punches > 0 {
+                segments.append(
+                    DaySegment(id: UUID(), day: day, value: punches, kind: .punches)
+                )
+            }
+            if combos > 0 {
+                segments.append(
+                    DaySegment(id: UUID(), day: day, value: combos, kind: .combos)
+                )
+            }
+            return segments
         }
     }
 

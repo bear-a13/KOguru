@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct DrillResultsModel: Identifiable, Hashable, Sendable {
+struct DrillResultsModel: Identifiable, Codable, Hashable, Sendable {
     let id: UUID
     let startedAt: Date
     let endedAt: Date

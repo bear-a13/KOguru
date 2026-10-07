@@ -11,6 +11,7 @@ struct HomeView: View {
     @State private var isShowingWorkoutSession = false
     @State private var isShowingDrillSession = false
     @State private var isShowingHistory = false
+    @State private var isShowingWarmUp = false
     
     var body: some View {
         ZStack {
@@ -34,8 +35,14 @@ struct HomeView: View {
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h1)
                         Spacer()
+
+                        CircleIconButton(systemName: "chart.bar.fill") {
+                            isShowingHistory = true
+                        }
+                        .accessibilityLabel("Histórico de treinos")
+                        .accessibilityHint("Toque duas vezes para ver seu histórico")
+                        .padding(.trailing, 16)
                     }
-                    .accessibilityElement(children: .combine)
                     
                     InformationHomeCard()
                         .padding(.horizontal, 16)
@@ -86,22 +93,17 @@ struct HomeView: View {
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
                         .accessibilityAddTraits(.isButton)
 
-                        // Botão 3: Histórico
+                        // Botão 3: Aquecimento
                         Button(action: {
-                            isShowingHistory = true
+                            isShowingWarmUp = true
                         }) {
-                            TrainCard(
-                                color: .amareloCard,
-                                titulo: "HISTÓRICO",
-                                subTitulo: "Acompanhe seus treinos, recordes e evolução de golpes.",
-                                ImagemBack: "explozaoAmarelo"
-                            )
-                            .accessibilityHidden(true)
+                            WarmUpCard()
+                                .accessibilityHidden(true)
                         }
                         .buttonStyle(.plain)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Histórico de treinos. Acompanhe seus treinos e evolução.")
-                        .accessibilityHint("Toque duas vezes para ver seu histórico")
+                        .accessibilityLabel("Aquecimento. Previna lesões antes do round")
+                        .accessibilityHint("Toque duas vezes para iniciar o aquecimento")
                         .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)
@@ -119,6 +121,9 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $isShowingHistory) {
             HistoryView()
+        }
+        .fullScreenCover(isPresented: $isShowingWarmUp) {
+            WarmUpView()
         }
     }
 }
