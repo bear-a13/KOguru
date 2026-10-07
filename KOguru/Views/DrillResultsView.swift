@@ -12,6 +12,7 @@ struct DrillResultsView: View {
     let onRestart: () -> Void
 
     @State private var visibleTier: Int = 0
+    @State private var shareItem: Image?
 
     init(
         result: DrillResultsModel,
@@ -27,13 +28,10 @@ struct DrillResultsView: View {
     private let bottomBackground = Color(red: 47 / 255, green: 62 / 255, blue: 102 / 255)
     private let buttonColor = Color(red: 181 / 255, green: 46 / 255, blue: 47 / 255)
 
-    // aqui coloca como vai querer os niveis para consegui as estrelas 
-    private var targetTier: Int {
-        if result.combosCompleted >= 15 { return 3 }
-        else if result.combosCompleted >= 10 { return 2 }
-        else if result.combosCompleted >= 5 { return 1 }
-        else { return 0 }
-    }
+    private let cardSize = CGSize(
+        width: ShareStatCardView.designWidth,
+        height: ShareStatCardView.designHeight
+    )
 
     var body: some View {
         GeometryReader { geometry in
@@ -69,11 +67,40 @@ struct DrillResultsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .overlay(alignment: .topTrailing) {
+                if let shareItem {
+                    ShareLink(
+                        item: shareItem,
+                        preview: SharePreview("Meu resultado no KOguru")
+                    ) {
+                        ShareIconButtonLabel()
+                    }
+                    .accessibilityHint("Compartilha o resultado do drill")
+                    .padding(.top, 12)
+                    .padding(.trailing, 12)
+                }
+            }
             .ignoresSafeArea(edges: .top)
             .onAppear {
                 triggerBeltAnimation()
+                if shareItem == nil {
+                    shareItem = makeShareImage()
+                }
             }
         }
+    }
+
+    // MARK: - Compartilhamento
+
+    private func makeShareImage() -> Image? {
+        let renderer = ImageRenderer(
+            content: ShareStatCardView(kind: .drill(result))
+                .frame(width: cardSize.width, height: cardSize.height)
+        )
+        renderer.scale = 1.5
+
+        guard let uiImage = renderer.uiImage else { return nil }
+        return Image(uiImage: uiImage)
     }
 
     // MARK: - Imagens com Crossfade
@@ -117,10 +144,10 @@ struct DrillResultsView: View {
     
     
     private func triggerBeltAnimation() {
-        guard targetTier > 0 else { return } // Se for zero estrelas, não precisa animar
+        guard result.starTier > 0 else { return } // Se for zero estrelas, não precisa animar
         
         // Loop para animar as estrelas progressivamente como um "Level Up"
-        for tier in 1...targetTier {
+        for tier in 1...result.starTier {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + (Double(tier) * 0.7)) {
                 withAnimation(.easeIn(duration: 0.5)) {
