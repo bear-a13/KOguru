@@ -41,4 +41,12 @@ struct DrillResultsModel: Identifiable, Codable, Hashable, Sendable {
         guard totalPunches > 0 else { return 0 }
         return Double(correctPunches) / Double(totalPunches)
     }
+
+    // Níveis de estrelas conquistadas no cinturão
+    var starTier: Int {
+        if combosCompleted >= 15 { return 3 }
+        if combosCompleted >= 10 { return 2 }
+        if combosCompleted >= 5 { return 1 }
+        return 0
+    }
 }

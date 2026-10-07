@@ -11,26 +11,31 @@ struct PrimaryActionButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                if let systemImage {
-                    Image(systemName: systemImage)
-                        .font(.system(size: 24, weight: .black))
-                }
-
-                Text(title)
-                    .font(Font.custom("Anton", size: 27))
-                    .tracking(0.5)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
-            .foregroundStyle(foregroundColor)
-            .frame(maxWidth: maximize ? .infinity : nil)
-            .frame(height: 57)
-            .padding(.horizontal, maximize ? 0 : 32)
-            .background(backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            content
         }
         .buttonStyle(.plain)
         .accessibilityHint(accessibilityHint ?? "")
+    }
+
+    // Estilo visual isolado para reuso fora do Button (ex: label de ShareLink).
+    var content: some View {
+        HStack(spacing: 8) {
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.system(size: 24, weight: .black))
+            }
+
+            Text(title)
+                .font(Font.custom("Anton", size: 27))
+                .tracking(0.5)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .foregroundStyle(foregroundColor)
+        .frame(maxWidth: maximize ? .infinity : nil)
+        .frame(height: 57)
+        .padding(.horizontal, maximize ? 0 : 32)
+        .background(backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }

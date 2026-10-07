@@ -22,11 +22,18 @@ struct ResultsView: View {
         self.onDone = onDone
     }
 
+    @State private var shareItem: Image?
+
     private let topBackground = Color( red: 23 / 255, green: 32 / 255, blue: 51 / 255)
 
     private let bottomBackground = Color(red: 47 / 255, green: 62 / 255, blue: 102 / 255)
 
     private let buttonColor = Color(red: 181 / 255, green: 46 / 255, blue: 47 / 255)
+
+    private let cardSize = CGSize(
+        width: ShareStatCardView.designWidth,
+        height: ShareStatCardView.designHeight
+    )
 
     var body: some View {
         GeometryReader { geometry in
@@ -61,8 +68,37 @@ struct ResultsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .overlay(alignment: .topTrailing) {
+                if let shareItem {
+                    ShareLink(
+                        item: shareItem,
+                        preview: SharePreview("Meu treino no KOguru")
+                    ) {
+                        ShareIconButtonLabel()
+                    }
+                    .accessibilityHint("Compartilha o resultado do treino")
+                    .padding(.top, 12)
+                    .padding(.trailing, 12)
+                }
+            }
             .ignoresSafeArea(edges: .top)
         }
+        .onAppear {
+            shareItem = makeShareImage()
+        }
+    }
+
+    // MARK: - Compartilhamento
+
+    private func makeShareImage() -> Image? {
+        let renderer = ImageRenderer(
+            content: ShareStatCardView(kind: .workout(result))
+                .frame(width: cardSize.width, height: cardSize.height)
+        )
+        renderer.scale = 1.5
+
+        guard let uiImage = renderer.uiImage else { return nil }
+        return Image(uiImage: uiImage)
     }
 
     // MARK: - Imagem fixa dos Assets

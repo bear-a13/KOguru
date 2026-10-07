@@ -25,7 +25,7 @@ struct WarmUpView: View {
         WarmUpExercise(id: 0, name: "ROTAÇÃO DE OMBROS", duration: 30, imageName: "CardCansado"),
         WarmUpExercise(id: 1, name: "ALONGAMENTO DE PULSOS", duration: 30, imageName: "CardSoco"),
         WarmUpExercise(id: 2, name: "ROTAÇÃO DE TRONCO", duration: 30, imageName: "CardGuarda"),
-        WarmUpExercise(id: 3, name: "SALTOS LEVES (PULAR CORDA)", duration: 30, imageName: "CardCansado")
+        WarmUpExercise(id: 3, name: "SALTOS LEVES", duration: 30, imageName: "CardCansado")
     ]
 
     private let topBackground = Color(red: 23 / 255, green: 32 / 255, blue: 51 / 255)
