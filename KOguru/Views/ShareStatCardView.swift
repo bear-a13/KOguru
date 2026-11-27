@@ -84,7 +84,7 @@ struct ShareStatCardView: View {
         case .workout(let result):
             HStack(spacing: 20) {
                 statCard(
-                    title: "Nº DE GOLPES",
+                    title: String(localized: "Nº DE GOLPES"),
                     value: "\(result.totalPunches)",
                     unit: result.totalPunches == 1 ? "GOLPE" : "GOLPES",
                     systemImage: "target",
@@ -94,7 +94,7 @@ struct ShareStatCardView: View {
                 )
 
                 statCard(
-                    title: "VELOCIDADE",
+                    title: String(localized: "VELOCIDADE"),
                     value: formattedMaximumSpeed(result.maximumSpeed),
                     unit: result.speedUnit.symbol.uppercased(),
                     systemImage: "wind",
@@ -107,9 +107,9 @@ struct ShareStatCardView: View {
         case .drill(let result):
             HStack(spacing: 16) {
                 statCard(
-                    title: "ACERTOS",
+                    title: String(localized: "ACERTOS"),
                     value: "\(result.correctPunches)",
-                    unit: "GOLPES",
+                    unit: String(localized: "GOLPES"),
                     systemImage: "target",
                     accentColor: ShareStatCardView.red,
                     contentColor: ShareStatCardView.lightRed,
@@ -117,9 +117,9 @@ struct ShareStatCardView: View {
                 )
 
                 statCard(
-                    title: "COMBOS",
+                    title: String(localized: "COMBOS"),
                     value: "\(result.combosCompleted)",
-                    unit: "COMPLETOS",
+                    unit: String(localized: "COMPLETOS"),
                     systemImage: "star.fill",
                     accentColor: ShareStatCardView.blue,
                     contentColor: ShareStatCardView.lightBlue,
@@ -127,9 +127,9 @@ struct ShareStatCardView: View {
                 )
 
                 statCard(
-                    title: "ERRADOS",
+                    title: String(localized: "ERRADOS"),
                     value: "\(result.wrongPunches)",
-                    unit: "GOLPES",
+                    unit: String(localized: "GOLPES"),
                     systemImage: "xmark",
                     accentColor: ShareStatCardView.yellow,
                     contentColor: ShareStatCardView.lightYellow,

@@ -133,9 +133,9 @@ CircleIconButton(systemName: "book.pages") { showTutorialSheet = true }
 
                 if viewModel.currentPhase == .counting {
                     PrimaryActionButton(
-                        title: "RESULTADOS",
+                        title: String(localized: "RESULTADOS"),
                         systemImage: "trophy.fill",
-                        accessibilityHint: "Sai da tela de contagem e vai para a tela de resultados",
+                        accessibilityHint: String(localized: "Sai da tela de contagem e vai para a tela de resultados"),
                         action: finishWorkout
                     )
                     .padding(.horizontal, 30)

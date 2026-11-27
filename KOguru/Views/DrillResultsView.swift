@@ -183,9 +183,9 @@ struct DrillResultsView: View {
             HStack(spacing: 14) {
                
                 ResultSummaryCard(
-                    title: "ACERTOS",
+                    title: String(localized: "ACERTOS"),
                     value: "\(result.correctPunches)",
-                    unit: "GOLPES",
+                    unit: String(localized: "GOLPES"),
                     systemImage: "target",
                     accentColor: Color(
                         red: 169 / 255,
@@ -200,9 +200,9 @@ struct DrillResultsView: View {
                 )
 
                 ResultSummaryCard(
-                    title: "COMBOS",
+                    title: String(localized: "COMBOS"),
                     value: "\(result.combosCompleted)",
-                    unit: "COMPLETOS",
+                    unit: String(localized: "COMPLETOS"),
                     systemImage: "star.fill",
                     accentColor: Color.azulResultadosFora,
                     contentColor: Color(
@@ -213,9 +213,9 @@ struct DrillResultsView: View {
                 )
                 
                 ResultSummaryCard(
-                    title: "ERRADOS",
+                    title: String(localized: "ERRADOS"),
                     value: "\(result.wrongPunches)",
-                    unit: "GOLPES",
+                    unit: String(localized: "GOLPES"),
                     systemImage: "xmark",
                     accentColor: Color(
                         red: 221 / 255,
@@ -238,18 +238,18 @@ struct DrillResultsView: View {
     private var actions: some View {
         VStack(spacing: 12) {
             PrimaryActionButton(
-                title: "FINALIZAR",
+                title: String(localized: "FINALIZAR"),
                 systemImage: "checkmark",
                 backgroundColor: buttonColor,
-                accessibilityHint: "Fecha o resultado e retorna para a tela inicial",
+                accessibilityHint: String(localized: "Fecha o resultado e retorna para a tela inicial"),
                 action: onDone
             )
 
             PrimaryActionButton(
-                title: "TREINAR NOVAMENTE",
+                title: String(localized: "TREINAR NOVAMENTE"),
                 systemImage: "arrow.counterclockwise",
                 backgroundColor: topBackground,
-                accessibilityHint: "Recomeça o drill do zero",
+                accessibilityHint: String(localized: "Recomeça o drill do zero"),
                 action: onRestart
             )
         }

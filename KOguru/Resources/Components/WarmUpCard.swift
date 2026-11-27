@@ -11,8 +11,8 @@ struct WarmUpCard: View {
     var body: some View {
         TrainCard(
             color: .amareloCard,
-            titulo: "AQUECIMENTO",
-            subTitulo: "Previna lesões antes do round",
+            titulo: String(localized: "AQUECIMENTO"),
+            subTitulo: String(localized: "Previna lesões antes do round"),
             ImagemBack: "explozaoAmarelo"
         )
     }

@@ -143,9 +143,9 @@ struct ResultsView: View {
     private var metrics: some View {
         HStack(spacing: 14) {
             ResultSummaryCard(
-                title: "Nº DE GOLPES",
+                title: String(localized: "Nº DE GOLPES"),
                 value: "\(result.totalPunches)",
-                unit: result.totalPunches == 1 ? "GOLPE" : "GOLPES",
+                unit: result.totalPunches == 1 ? String(localized: "GOLPE") : String(localized: "GOLPES"),
                 systemImage: "target",
                 accentColor: Color(
                     red: 169 / 255,
@@ -160,7 +160,7 @@ struct ResultsView: View {
             )
 
             ResultSummaryCard(
-                title: "VELOCIDADE",
+                title: String(localized: "VELOCIDADE"),
                 value: formattedMaximumSpeed,
                 
                 unit: result.speedUnit.symbol.uppercased(),
@@ -195,18 +195,18 @@ struct ResultsView: View {
 private var actions: some View {
         VStack(spacing: 12) {
             PrimaryActionButton(
-                title: "FINALIZAR",
+                title: String(localized: "FINALIZAR"),
                 systemImage: "checkmark",
                 backgroundColor: buttonColor,
-                accessibilityHint: "Fecha o resultado e retorna para a tela inicial",
+                accessibilityHint: String(localized: "Fecha o resultado e retorna para a tela inicial"),
                 action: onDone
             )
 
             PrimaryActionButton(
-                title: "TREINAR NOVAMENTE",
+                title: String(localized: "TREINAR NOVAMENTE"),
                 systemImage: "arrow.counterclockwise",
                 backgroundColor: topBackground,
-                accessibilityHint: "Recomeça o treino do zero",
+                accessibilityHint: String(localized: "Recomeça o treino do zero"),
                 action: onRestart
             )
         }

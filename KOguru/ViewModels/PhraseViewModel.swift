@@ -27,7 +27,8 @@ class PhraseViewModel: ObservableObject {
     }
     
     func loadPhrase(){
-        guard let url = Bundle.main.url(forResource: "Phrases", withExtension: "json") else {
+        let resourceName = LocalizedResource.name(for: "Phrases")
+        guard let url = Bundle.main.url(forResource: resourceName, withExtension: "json") else {
             print("Arquivo Phrases.json não encontrado.")
             return
         }

@@ -15,22 +15,22 @@ final class OnboardingViewModel: ObservableObject {
         OnboardingPage(
             id: 0,
             imageName: "onboarding-ringue",
-            title: "TUDO PRONTO PARA ENTRAR NO RINGUE?",
+            title: String(localized: "TUDO PRONTO PARA ENTRAR NO RINGUE?"),
             paragraphs: [
-                "O KOguru foi feito para acompanhar enquanto você aprende, pratica e evolui.",
-                "E eu, Kaio, vou estar aqui para entrar nessa com você."
+                String(localized: "O KOguru foi feito para acompanhar enquanto você aprende, pratica e evolui."),
+                String(localized: "E eu, Kaio, vou estar aqui para entrar nessa com você."),
             ],
             actionStyle: .arrow
         ),
         OnboardingPage(
             id: 1,
             imageName: "onboarding-pancada",
-            title: "ROUND ONE, FIGHT!",
+            title: String(localized: "ROUND ONE, FIGHT!"),
             paragraphs: [
-                "É só colocar o celular numa superfície firme e ajustar sua posição.",
-                "Eu fico de olho em cada jab e direto pra te dar aquele feedback na hora!"
+                String(localized: "É só colocar o celular numa superfície firme e ajustar sua posição."),
+                String(localized: "Eu fico de olho em cada jab e direto pra te dar aquele feedback na hora!")
             ],
-            actionStyle: .title("BORA TREINAR")
+            actionStyle: .title(String(localized: "BORA TREINAR"))
         )
     ]
 

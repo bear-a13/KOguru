@@ -117,33 +117,33 @@ struct HistoryView: View {
             spacing: 12
         ) {
             HistoryStatCard(
-                title: "TREINOS",
+                title: String(localized: "TREINOS"),
                 value: "\(totalSessions)",
-                unit: totalSessions == 1 ? "SESSÃO" : "SESSÕES",
+                unit: totalSessions == 1 ? String(localized: "SESSÃO") : String(localized: "SESSÕES"),
                 systemImage: "figure.boxing",
                 accentColor: Color.vermelhoCard,
                 contentColor: Color(red: 255 / 255, green: 207 / 255, blue: 209 / 255)
             )
             HistoryStatCard(
-                title: "GOLPES",
+                title: String(localized: "GOLPES"),
                 value: "\(totalPunches)",
-                unit: totalPunches == 1 ? "GOLPE" : "GOLPES",
+                unit: totalPunches == 1 ? String(localized: "GOLPE") : String(localized: "GOLPES"),
                 systemImage: "target",
                 accentColor: Color.amareloCard,
                 contentColor: Color(red: 255 / 255, green: 241 / 255, blue: 196 / 255)
             )
             HistoryStatCard(
-                title: "TEMPO",
+                title: String(localized: "TEMPO"),
                 value: formatDuration(totalDuration),
-                unit: "TOTAL",
+                unit: String(localized: "TOTAL"),
                 systemImage: "clock.fill",
                 accentColor: Color.azulCard,
                 contentColor: Color(red: 205 / 255, green: 220 / 255, blue: 255 / 255)
             )
 HistoryStatCard(
-                title: "COMBOS",
+                title: String(localized: "COMBOS"),
                 value: "\(totalCombos)",
-                unit: totalCombos == 1 ? "COMBO" : "COMBOS",
+                unit: totalCombos == 1 ? String(localized: "COMBO") : String(localized: "COMBOS"),
                 systemImage: "star.fill",
                 accentColor: Color.azulResultadosFora,
                 contentColor: Color(red: 205 / 255, green: 220 / 255, blue: 255 / 255)
@@ -272,20 +272,20 @@ HistoryStatCard(
         let workoutEntries = resultsStore.sessions.map { session in
             SessionEntry(
                 id: session.id,
-                name: "JAB E DIRETO",
+                name: String(localized: "JAB E DIRETO"),
                 date: session.startedAt,
-                primary: "\(session.totalPunches) GOLPES",
-                secondary: "Vel. máx: \(formatSpeed(session.maximumSpeed)) m/s"
+                primary: String(localized: "\(session.totalPunches) GOLPES"),
+                secondary: String(localized: "Vel. máx: \(formatSpeed(session.maximumSpeed)) m/s")
             )
         }
 
         let drillEntries = drillResultsStore.sessions.map { session in
             SessionEntry(
                 id: session.id,
-                name: "DRILL",
+                name: String(localized: "DRILL"),
                 date: session.startedAt,
-                primary: "\(session.combosCompleted) COMBOS",
-                secondary: "Precisão: \(Int(session.accuracy * 100))%"
+                primary: String(localized: "\(session.combosCompleted) COMBOS"),
+                secondary: String(localized: "Precisão: \(Int(session.accuracy * 100))%")
             )
         }
 
@@ -306,8 +306,8 @@ HistoryStatCard(
 
         var label: String {
             switch self {
-            case .punches: return "Golpes"
-            case .combos: return "Combos"
+            case .punches: return String(localized: "Golpes")
+            case .combos: return String(localized: "Combos")
             }
         }
     }

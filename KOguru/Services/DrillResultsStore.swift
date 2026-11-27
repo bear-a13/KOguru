@@ -44,7 +44,7 @@ final class DrillResultsStore: ObservableObject {
             // Fallback válido para o sandbox do aplicativo.
             fileURL = fileManager.temporaryDirectory
                 .appendingPathComponent("drill-results.json")
-            lastErrorMessage = "Não foi possível abrir a pasta de dados: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível abrir a pasta de dados: \(error.localizedDescription)")
         }
 
         load()
@@ -74,7 +74,7 @@ final class DrillResultsStore: ObservableObject {
             lastErrorMessage = nil
         } catch {
             sessions = []
-            lastErrorMessage = "Não foi possível carregar os drills: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível carregar os drills: \(error.localizedDescription)")
         }
     }
 
@@ -84,7 +84,7 @@ final class DrillResultsStore: ObservableObject {
             try data.write(to: fileURL, options: .atomic)
             lastErrorMessage = nil
         } catch {
-            lastErrorMessage = "Não foi possível salvar o drill: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível salvar o drill: \(error.localizedDescription)")
         }
     }
 }
