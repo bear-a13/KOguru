@@ -106,12 +106,12 @@ struct TutorialView: View {
             // MARK: - BOTÃO INFERIOR
             HStack(alignment: .center) {
                 PrimaryActionButton(
-                    title: onStart != nil ? "CONTINUAR PARA EXERCÍCIO" : "FECHAR INSTRUÇÕES",
+                    title: onStart != nil ? String(localized: "CONTINUAR PARA EXERCÍCIO") : String(localized: "FECHAR INSTRUÇÕES"),
                     systemImage: onStart != nil ? "figure.boxing" : "xmark.circle",
                     backgroundColor: Color(red: 0.65, green: 0.15, blue: 0.13),
                     accessibilityHint: onStart != nil
-                        ? "Toque duas vezes para fechar o tutorial e iniciar a câmera"
-                        : "Retorna ao exercício",
+                        ? String(localized: "Toque duas vezes para fechar o tutorial e iniciar a câmera")
+                        : String(localized: "Retorna ao exercício"),
                     action: {
                         if let onStart = onStart {
                             onStart()

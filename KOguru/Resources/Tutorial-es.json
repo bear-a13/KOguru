@@ -1,0 +1,22 @@
+[
+  {
+    "image": "passo1",
+    "title": "PRIMER PASO",
+    "description": "Extiende rápidamente el brazo delantero (jab), girando ligeramente el puño al final del movimiento. Mantén la otra mano protegiendo tu rostro."
+  },
+  {
+    "image": "passo2",
+    "title": "SEGUNDO PASO",
+    "description": "Inicia el movimiento del cruzado girando el talón de la pierna trasera hacia afuera. Acompaña con la rotación de la cadera y el torso para generar potencia."
+  },
+  {
+    "image": "passo3",
+    "title": "TERCER PASO",
+    "description": "Extiende el brazo trasero en línea recta, manteniendo el hombro alto para proteger el mentón. El puño debe girar en el momento final del impacto."
+  },
+  {
+    "image": "passo4",
+    "title": "CUARTO PASO",
+    "description": "Retira el brazo inmediatamente por el mismo camino. Vuelve a la guardia inicial con la base firme y el abdomen contraído."
+  }
+]

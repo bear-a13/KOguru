@@ -26,9 +26,9 @@ enum Stance: String, Codable, CaseIterable, Hashable, Sendable {
     var displayName: String {
         switch self {
         case .orthodox:
-            return "Ortodoxa"
+            return String(localized: "Ortodoxa")
         case .southpaw:
-            return "Canhota"
+            return String(localized: "Canhota")
         }
     }
 }

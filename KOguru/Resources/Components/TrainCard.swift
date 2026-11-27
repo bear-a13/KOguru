@@ -11,8 +11,8 @@ struct TrainCard: View {
     
     @Environment(\.dismiss) var dismiss
     var color : Color
-    var titulo : String = "JAB E DIRETO"
-    var subTitulo : String = "Aprenda a execultar os movimentos do boxe Jab e Direto"
+    var titulo : String = String(localized: "JAB E DIRETO")
+    var subTitulo : String = String(localized: "Aprenda a execultar os movimentos do boxe Jab e Direto")
     var ImagemBack : String =  "explozãoAzul"
     var body: some View {
        
@@ -31,12 +31,12 @@ struct TrainCard: View {
                     
                     // Nome e pequena descrição do treino
                     VStack (alignment: .leading) {
-                        Text("\(titulo)")
+                        Text(titulo)
                             .font(Font.custom("Anton", size: 25))
                             .fontWeight(.bold)
                             .foregroundStyle(color)
                         
-                        Text("\(subTitulo)")
+                        Text(subTitulo)
                             .font(Font.custom("PingFang HK", size: 18))
                             .foregroundStyle(color)
                         

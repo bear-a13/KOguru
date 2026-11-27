@@ -14,6 +14,7 @@ class DrillManager: ObservableObject {
     @Published var lastWasWrongPunch = false
     @Published var timeRemaining: TimeInterval = DrillManager.roundDuration
     @Published var isRoundOver = false
+    @Published var isMuted = false
 
     private(set) var combosCompleted = 0
     private(set) var correctPunches = 0
@@ -25,27 +26,27 @@ class DrillManager: ObservableObject {
     private let combos: [DrillCombo] = [
         // SE QUISER COLOCAR MAIS COMBOS Ë SO COLOCAR AQUI
 
-        DrillCombo(textToSpeak: "Jeb", sequence: [.jab]),
-        DrillCombo(textToSpeak: "Direto", sequence: [.cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb"), sequence: [.jab]),
+        DrillCombo(textToSpeak: String(localized: "Direto"), sequence: [.cross]),
         // Duplas de Volume e Entrada
-        DrillCombo(textToSpeak: "Jeb, Jeb", sequence: [.jab, .jab]),
-        DrillCombo(textToSpeak: "Jeb, Direto", sequence: [.jab, .cross]),
-        DrillCombo(textToSpeak: "Direto, Jeb", sequence: [.cross, .jab]),
-        DrillCombo(textToSpeak: "Direto, Direto", sequence: [.cross, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Jeb"), sequence: [.jab, .jab]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Direto"), sequence: [.jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Direto, Jeb"), sequence: [.cross, .jab]),
+        DrillCombo(textToSpeak: String(localized: "Direto, Direto"), sequence: [.cross, .cross]),
 
         // Trios Clássicos
-        DrillCombo(textToSpeak: "Jeb, Jeb, Direto", sequence: [.jab, .jab, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Direto, Jeb", sequence: [.jab, .cross, .jab]),
-        DrillCombo(textToSpeak: "Direto, Jeb, Direto", sequence: [.cross, .jab, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Direto, Direto", sequence: [.jab, .cross, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Jeb, Jeb", sequence: [.jab, .jab, .jab]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Jeb, Direto"), sequence: [.jab, .jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Direto, Jeb"), sequence: [.jab, .cross, .jab]),
+        DrillCombo(textToSpeak: String(localized: "Direto, Jeb, Direto"), sequence: [.cross, .jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Direto, Direto"), sequence: [.jab, .cross, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Jeb, Jeb"), sequence: [.jab, .jab, .jab]),
 
         // Sequências Longas e Volume Avançado
-        DrillCombo(textToSpeak: "Jeb, Jeb, Jeb, Direto", sequence: [.jab, .jab, .jab, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Direto, Jeb, Direto", sequence: [.jab, .cross, .jab, .cross]),
-        DrillCombo(textToSpeak: "Direto, Jeb, Jeb, Direto", sequence: [.cross, .jab, .jab, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Jeb, Direto, Direto", sequence: [.jab, .jab, .cross, .cross]),
-        DrillCombo(textToSpeak: "Jeb, Direto, Jeb, Direto, Jeb", sequence: [.jab, .cross, .jab, .cross, .jab])
+        DrillCombo(textToSpeak: String(localized: "Jeb, Jeb, Jeb, Direto"), sequence: [.jab, .jab, .jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Direto, Jeb, Direto"), sequence: [.jab, .cross, .jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Direto, Jeb, Jeb, Direto"), sequence: [.cross, .jab, .jab, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Jeb, Direto, Direto"), sequence: [.jab, .jab, .cross, .cross]),
+        DrillCombo(textToSpeak: String(localized: "Jeb, Direto, Jeb, Direto, Jeb"), sequence: [.jab, .cross, .jab, .cross, .jab])
     ]
 
     // MARK: - Controle do drill
@@ -60,6 +61,7 @@ class DrillManager: ObservableObject {
         lastWasWrongPunch = false
         timeRemaining = Self.roundDuration
         drillStartedAt = Date()
+        isMuted = false
 
         startRoundTimer()
         nextCommand()
@@ -73,6 +75,13 @@ class DrillManager: ObservableObject {
         roundTimer = nil
         synthesizer.stopSpeaking(at: .immediate)
         currentCombo = nil
+    }
+
+    func toggleMute() {
+        isMuted.toggle()
+        if isMuted {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
     }
 
     func makeResults() -> DrillResultsModel {
@@ -160,9 +169,13 @@ class DrillManager: ObservableObject {
         isComboCompleted = false
 
         let utterance = AVSpeechUtterance(string: nextCombo.textToSpeak)
-        utterance.voice = AVSpeechSynthesisVoice(language: "pt-BR")
+        utterance.voice = AVSpeechSynthesisVoice(
+            language: Locale.current.identifier.replacingOccurrences(of: "_", with: "-")
+        )
         utterance.rate = 0.5
 
-        synthesizer.speak(utterance)
+        if !isMuted {
+            synthesizer.speak(utterance)
+        }
     }
 }

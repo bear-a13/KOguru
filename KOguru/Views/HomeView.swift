@@ -10,6 +10,8 @@ import SwiftUI
 struct HomeView: View {
     @State private var isShowingWorkoutSession = false
     @State private var isShowingDrillSession = false
+    @State private var isShowingHistory = false
+    @State private var isShowingWarmUp = false
     
     var body: some View {
         ZStack {
@@ -33,8 +35,14 @@ struct HomeView: View {
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h1)
                         Spacer()
+
+                        CircleIconButton(systemName: "chart.bar.fill") {
+                            isShowingHistory = true
+                        }
+                        .accessibilityLabel("Histórico de treinos")
+                        .accessibilityHint("Toque duas vezes para ver seu histórico")
+                        .padding(.trailing, 16)
                     }
-                    .accessibilityElement(children: .combine)
                     
                     InformationHomeCard()
                         .padding(.horizontal, 16)
@@ -55,8 +63,8 @@ struct HomeView: View {
                         }) {
                             TrainCard(
                                 color: .vermelhoCard,
-                                titulo: "JAB E DIRETO",
-                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto.",
+                                titulo: String(localized: "JAB E DIRETO"),
+                                subTitulo: String(localized: "Aprenda a execultar os movimentos do boxe Jab e Direto."),
                                 ImagemBack: "explozaoVermelho"
                             )
                             .accessibilityHidden(true)
@@ -73,8 +81,8 @@ struct HomeView: View {
                         }) {
                             TrainCard(
                                 color: .azulCard,
-                                titulo: "DRILLS",
-                                subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
+                                titulo: String(localized: "DRILLS"),
+                                subTitulo: String(localized: "Aprenda na pratica com movimentos realizdos em lutas reais."),
                                 ImagemBack: "explozaoAzul"
                             )
                             .accessibilityHidden(true)
@@ -83,6 +91,19 @@ struct HomeView: View {
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel("Treino de Drills. Aprenda na prática com movimentos realizados em lutas reais.")
                         .accessibilityHint("Toque duas vezes para iniciar esta sessão")
+                        .accessibilityAddTraits(.isButton)
+
+                        // Botão 3: Aquecimento
+                        Button(action: {
+                            isShowingWarmUp = true
+                        }) {
+                            WarmUpCard()
+                                .accessibilityHidden(true)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Aquecimento. Previna lesões antes do round")
+                        .accessibilityHint("Toque duas vezes para iniciar o aquecimento")
                         .accessibilityAddTraits(.isButton)
                     }
                     .padding(.bottom, 100)
@@ -97,6 +118,12 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $isShowingDrillSession) {
             DrillSessionView()
+        }
+        .fullScreenCover(isPresented: $isShowingHistory) {
+            HistoryView()
+        }
+        .fullScreenCover(isPresented: $isShowingWarmUp) {
+            WarmUpView()
         }
     }
 }

@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct DrillResultsModel: Identifiable, Hashable, Sendable {
+struct DrillResultsModel: Identifiable, Codable, Hashable, Sendable {
     let id: UUID
     let startedAt: Date
     let endedAt: Date
@@ -40,5 +40,13 @@ struct DrillResultsModel: Identifiable, Hashable, Sendable {
     var accuracy: Double {
         guard totalPunches > 0 else { return 0 }
         return Double(correctPunches) / Double(totalPunches)
+    }
+
+    // Níveis de estrelas conquistadas no cinturão
+    var starTier: Int {
+        if combosCompleted >= 15 { return 3 }
+        if combosCompleted >= 10 { return 2 }
+        if combosCompleted >= 5 { return 1 }
+        return 0
     }
 }

@@ -5,10 +5,12 @@ struct DrillSessionView: View {
     @StateObject private var cameraManager = CameraManager()
     @StateObject private var workoutViewModel = WorkoutViewModel()
     @StateObject private var drillManager = DrillManager()
+    @StateObject private var resultsStore = DrillResultsStore()
     @Environment(\.dismiss) private var dismiss
 
     @State private var drillResult: DrillResultsModel?
-    
+    @State private var showInstructions = false
+
     // Estados da animação e tempo total
     @State private var isTimePulsing = false
     private let totalRoundTime: Double = 60.0 // Ajuste este valor para a duração real do seu round
@@ -54,6 +56,9 @@ struct DrillSessionView: View {
                 finishDrill()
             }
         }
+        .sheet(isPresented: $showInstructions) {
+            TutorialView()
+        }
     }
 
     // MARK: - Interface da câmera
@@ -90,8 +95,15 @@ struct DrillSessionView: View {
 
                     Spacer()
 
-                    Color.clear.frame(width: 40, height: 40)
-                        .accessibilityHidden(true)
+                    HStack(spacing: 10) {
+                        CircleIconButton(
+                            systemName: drillManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill"
+                        ) { drillManager.toggleMute() }
+                            .accessibilityLabel(drillManager.isMuted ? "Ativar som" : "Silenciar som")
+
+                        CircleIconButton(systemName: "doc.text") { showInstructions = true }
+                            .accessibilityLabel("Instruções")
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 50)
@@ -195,6 +207,7 @@ struct DrillSessionView: View {
 
     private func finishDrill() {
         let results = drillManager.makeResults()
+        resultsStore.add(results)
         stopCamera()
 
         withAnimation(.easeInOut(duration: 0.25)) {
@@ -255,8 +268,8 @@ struct DrillSessionView: View {
 
     private func punchName(for punch: PunchType) -> String {
         switch punch {
-        case .jab: return "JAB"
-        case .cross: return "DIRETO"
+        case .jab: return String(localized: "JAB")
+        case .cross: return String(localized: "DIRETO")
         default: return ""
         }
     }
@@ -265,12 +278,12 @@ struct DrillSessionView: View {
 
     private func accessibilityComboLabel(for combo: DrillCombo) -> String {
         let sequenceText = combo.sequence.map { punchName(for: $0) }.joined(separator: ", ")
-        return "Sequência de golpes: \(sequenceText)"
+        return String(localized: "Sequência de golpes: \(sequenceText)")
     }
 
     private func accessibilityComboValue(for combo: DrillCombo) -> String {
         guard drillManager.currentStepIndex < combo.sequence.count else { return "Combo concluído" }
         let currentPunch = punchName(for: combo.sequence[drillManager.currentStepIndex])
-        return "Aguardando golpe: \(currentPunch)"
+        return String(localized: "Aguardando golpe: \(currentPunch)")
     }
 }

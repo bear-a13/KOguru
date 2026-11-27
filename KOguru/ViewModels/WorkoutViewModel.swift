@@ -57,7 +57,7 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
             guard let self else { return }
 
             guard let observations = request.results as? [VNHumanBodyPoseObservation],
-                  let body = observations.first else {
+                  let body = largestBody(in: observations) else {
                 if self.currentPhase == .framing {
                     DispatchQueue.main.async {
                         self.isProperlyFramed = false
@@ -90,6 +90,38 @@ final class WorkoutViewModel: ObservableObject, @unchecked Sendable {
     }
 
     // MARK: - Fase 1: enquadramento
+
+    // Com mais de um corpo no quadro, prioriza o maior (mais próximo da câmera),
+    // no lugar de pegar o primeiro que o Vision devolver.
+    private func largestBody(
+        in observations: [VNHumanBodyPoseObservation]
+    ) -> VNHumanBodyPoseObservation? {
+        observations.max { first, second in
+            bodyArea(first) < bodyArea(second)
+        }
+    }
+
+    private func bodyArea(
+        _ body: VNHumanBodyPoseObservation
+    ) -> CGFloat {
+        guard let points = try? body.recognizedPoints(.all) else { return 0 }
+
+        var minX = CGFloat.greatestFiniteMagnitude
+        var maxX = -CGFloat.greatestFiniteMagnitude
+        var minY = CGFloat.greatestFiniteMagnitude
+        var maxY = -CGFloat.greatestFiniteMagnitude
+
+        for point in points.values where point.confidence > 0 {
+            minX = min(minX, point.location.x)
+            maxX = max(maxX, point.location.x)
+            minY = min(minY, point.location.y)
+            maxY = max(maxY, point.location.y)
+        }
+
+        let width = max(maxX - minX, 0)
+        let height = max(maxY - minY, 0)
+        return width * height
+    }
 
     private func checkFraming(
         body: VNHumanBodyPoseObservation,
