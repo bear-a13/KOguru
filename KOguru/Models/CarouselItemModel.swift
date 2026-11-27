@@ -20,7 +20,8 @@ struct CarouselItem: Identifiable, Codable {
 }
 
 func carregarTutorial() -> [CarouselItem] {
-    guard let url = Bundle.main.url(forResource: "Tutorial", withExtension: "json"),
+    let resourceName = LocalizedResource.name(for: "Tutorial")
+    guard let url = Bundle.main.url(forResource: resourceName, withExtension: "json"),
           let data = try? Data(contentsOf: url),
           let itens = try? JSONDecoder().decode([CarouselItem].self, from: data) else {
         return []

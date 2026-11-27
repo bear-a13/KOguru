@@ -63,8 +63,8 @@ struct HomeView: View {
                         }) {
                             TrainCard(
                                 color: .vermelhoCard,
-                                titulo: "JAB E DIRETO",
-                                subTitulo: "Aprenda a execultar os movimentos do boxe Jab e Direto.",
+                                titulo: String(localized: "JAB E DIRETO"),
+                                subTitulo: String(localized: "Aprenda a execultar os movimentos do boxe Jab e Direto."),
                                 ImagemBack: "explozaoVermelho"
                             )
                             .accessibilityHidden(true)
@@ -81,8 +81,8 @@ struct HomeView: View {
                         }) {
                             TrainCard(
                                 color: .azulCard,
-                                titulo: "DRILLS",
-                                subTitulo: "Aprenda na pratica com movimentos realizdos em lutas reais.",
+                                titulo: String(localized: "DRILLS"),
+                                subTitulo: String(localized: "Aprenda na pratica com movimentos realizdos em lutas reais."),
                                 ImagemBack: "explozaoAzul"
                             )
                             .accessibilityHidden(true)

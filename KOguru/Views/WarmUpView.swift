@@ -22,10 +22,10 @@ struct WarmUpView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private let exercises: [WarmUpExercise] = [
-        WarmUpExercise(id: 0, name: "ROTAÇÃO DE OMBROS", duration: 30, imageName: "CardCansado"),
-        WarmUpExercise(id: 1, name: "ALONGAMENTO DE PULSOS", duration: 30, imageName: "CardSoco"),
-        WarmUpExercise(id: 2, name: "ROTAÇÃO DE TRONCO", duration: 30, imageName: "CardGuarda"),
-        WarmUpExercise(id: 3, name: "SALTOS LEVES", duration: 30, imageName: "CardCansado")
+        WarmUpExercise(id: 0, name: String(localized: "ROTAÇÃO DE OMBROS"), duration: 30, imageName: "CardCansado"),
+        WarmUpExercise(id: 1, name: String(localized: "ALONGAMENTO DE PULSOS"), duration: 30, imageName: "CardSoco"),
+        WarmUpExercise(id: 2, name: String(localized: "ROTAÇÃO DE TRONCO"), duration: 30, imageName: "CardGuarda"),
+        WarmUpExercise(id: 3, name: String(localized: "SALTOS LEVES"), duration: 30, imageName: "CardCansado")
     ]
 
     private let topBackground = Color(red: 23 / 255, green: 32 / 255, blue: 51 / 255)
@@ -61,10 +61,10 @@ struct WarmUpView: View {
                 }
 
                 PrimaryActionButton(
-                    title: "FINALIZAR AQUECIMENTO",
+                    title: String(localized: "FINALIZAR AQUECIMENTO"),
                     systemImage: "checkmark",
                     backgroundColor: buttonColor,
-                    accessibilityHint: "Encerra o aquecimento e retorna para a tela inicial",
+                    accessibilityHint: String(localized: "Encerra o aquecimento e retorna para a tela inicial"),
                     action: { dismiss() }
                 )
                 .padding(.horizontal, 30)

@@ -268,8 +268,8 @@ struct DrillSessionView: View {
 
     private func punchName(for punch: PunchType) -> String {
         switch punch {
-        case .jab: return "JAB"
-        case .cross: return "DIRETO"
+        case .jab: return String(localized: "JAB")
+        case .cross: return String(localized: "DIRETO")
         default: return ""
         }
     }
@@ -278,12 +278,12 @@ struct DrillSessionView: View {
 
     private func accessibilityComboLabel(for combo: DrillCombo) -> String {
         let sequenceText = combo.sequence.map { punchName(for: $0) }.joined(separator: ", ")
-        return "Sequência de golpes: \(sequenceText)"
+        return String(localized: "Sequência de golpes: \(sequenceText)")
     }
 
     private func accessibilityComboValue(for combo: DrillCombo) -> String {
         guard drillManager.currentStepIndex < combo.sequence.count else { return "Combo concluído" }
         let currentPunch = punchName(for: combo.sequence[drillManager.currentStepIndex])
-        return "Aguardando golpe: \(currentPunch)"
+        return String(localized: "Aguardando golpe: \(currentPunch)")
     }
 }

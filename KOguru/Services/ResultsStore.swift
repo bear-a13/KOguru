@@ -44,7 +44,7 @@ final class ResultsStore: ObservableObject {
             // Fallback válido para o sandbox do aplicativo.
             fileURL = fileManager.temporaryDirectory
                 .appendingPathComponent("workout-results.json")
-            lastErrorMessage = "Não foi possível abrir a pasta de dados: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível abrir a pasta de dados: \(error.localizedDescription)")
         }
 
         load()
@@ -74,7 +74,7 @@ final class ResultsStore: ObservableObject {
             lastErrorMessage = nil
         } catch {
             sessions = []
-            lastErrorMessage = "Não foi possível carregar os treinos: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível carregar os treinos: \(error.localizedDescription)")
         }
     }
 
@@ -84,7 +84,7 @@ final class ResultsStore: ObservableObject {
             try data.write(to: fileURL, options: .atomic)
             lastErrorMessage = nil
         } catch {
-            lastErrorMessage = "Não foi possível salvar o treino: \(error.localizedDescription)"
+            lastErrorMessage = String(localized: "Não foi possível salvar o treino: \(error.localizedDescription)")
         }
     }
 }

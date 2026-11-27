@@ -23,9 +23,9 @@ enum PunchSpeedUnit: String, Codable, Sendable {
     var description: String {
         switch self {
         case .shoulderWidthsPerSecond:
-            return "Largura de ombro por segundo"
+            return String(localized: "Largura de ombro por segundo")
         case .metersPerSecond:
-            return "Metros por segundo"
+            return String(localized: "Metros por segundo")
         }
     }
 }
